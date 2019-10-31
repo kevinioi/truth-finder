@@ -1,0 +1,23 @@
+************************
+To Do
+************************
+- make web scraper
+- Stance Determination
+    - Machine Learning
+- Credibility Assessment
+
+************************
+Resources
+************************
+    Web Scraping
+        - Scrapy
+            - Pull html pages
+        - Selenium?
+        - BeautifulSoup
+            - Dissect HTML files
+            - https://www.geeksforgeeks.org/performing-google-search-using-python-code/
+
+    NLTK
+        - Natural Language processing library
+
+    LibLinear -> classifier
