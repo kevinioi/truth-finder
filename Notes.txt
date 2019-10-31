@@ -11,8 +11,6 @@ To Do
 - Credibility Assessment
     - 
 
-
-
 ************************
 Resources
 ************************
@@ -29,3 +27,6 @@ Resources
         - Punctuation counts as a word, can remove it
 
     LibLinear -> classifier
+
+    sklearn
+        - python machine learning lib?
