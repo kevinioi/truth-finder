@@ -1,10 +1,17 @@
 ************************
 To Do
 ************************
-- make web scraper
+- Web Scraper
+    - Grabs first 30 results from google search
+        - Takes body
+
 - Stance Determination
     - Machine Learning
+
 - Credibility Assessment
+    - 
+
+
 
 ************************
 Resources
@@ -19,5 +26,6 @@ Resources
 
     NLTK
         - Natural Language processing library
+        - Punctuation counts as a word, can remove it
 
     LibLinear -> classifier
