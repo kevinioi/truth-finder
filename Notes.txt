@@ -11,28 +11,34 @@ To Do
         - train()
             -> -s 6  L1 regularized logistic regression
             -> -wi 4 -c 1 weight support more heavily to balance training data
-                -> not sure what to set this to
 
 - Credibility Assessment
-    - 
+    - During testing
+        - Keep track of # of correct stances and incorrect stances
+    - Reliability = sum(supportWhenTrue, refuteWhenFalst)/#articles
+    - 0.5 is baseline
+        - If websource not previously seen (or maybe not enough evidence?)
 
 ************************
 Resources
 ************************
     Web Scraping
-        - Scrapy
-            - Pull html pages
-        - Selenium?
         - BeautifulSoup
             - Dissect HTML files
             - https://www.geeksforgeeks.org/performing-google-search-using-python-code/
+        - Scrapy
+            - Pull html pages
+        - Selenium?
 
     NLTK
-        - Natural Language processing library
         - Punctuation counts as a word, can remove it
+        - Chunk sentences
+        - Use to remove people's and place's names (NNP...)
+        - https://pythonprogramming.net/natural-language-toolkit-nltk-part-speech-tagging/
 
     LibLinear -> classifier
         - https://www.csie.ntu.edu.tw/~cjlin/liblinear/#download
+    
     sklearn
         - python machine learning lib?
 
@@ -41,3 +47,4 @@ Resources
 Extensions??
 ************************
 - See how well article titles predict validity 
+- Measure overlap of stemmed claims and articles
