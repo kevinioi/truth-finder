@@ -2,11 +2,16 @@
 To Do
 ************************
 - Web Scraper
+    - BeautifulSoup
     - Grabs first 30 results from google search
         - Takes body
 
 - Stance Determination
-    - Machine Learning
+    - liblinearutil
+        - train()
+            -> -s 6  L1 regularized logistic regression
+            -> -wi 4 -c 1 weight support more heavily to balance training data
+                -> not sure what to set this to
 
 - Credibility Assessment
     - 
@@ -27,6 +32,12 @@ Resources
         - Punctuation counts as a word, can remove it
 
     LibLinear -> classifier
-
+        - https://www.csie.ntu.edu.tw/~cjlin/liblinear/#download
     sklearn
         - python machine learning lib?
+
+
+************************
+Extensions??
+************************
+- See how well article titles predict validity 
