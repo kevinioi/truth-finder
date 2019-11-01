@@ -7,9 +7,6 @@ import random
 train_sample = []
 test_sample = []
 
-
-
-
 # using naive bayes
 # posterior = (prior*likelyhood)/ evidence
 
