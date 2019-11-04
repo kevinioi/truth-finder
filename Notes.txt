@@ -48,4 +48,7 @@ Extensions??
 ************************
 - See how well article titles predict validity 
 - Measure overlap of stemmed claims and articles
+
 - Replace named entity of the claim in the article with stemmed? 
+    - Or with 'ClaimEntity'
+    - Check bigram and trigram interactions?
