@@ -14,10 +14,10 @@ from collections import defaultdict
 
 
 #load pre-trained models
-model1 = llu.load_model("../resources//stance_models/model.liblin")
-model2 = llu.load_model("../resources//stance_models/modelWeight.liblin")
+model1 = llu.load_model("../resources//stance_models/gen2v1.model")
+# model2 = llu.load_model("../resources//stance_models/modelWeight.liblin")
 
-featDict = featureBag.getFeatureFile("../resources/feats.pickle")
+featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 
 
 dataSet = ([], [])
@@ -30,9 +30,9 @@ for file_ in os.listdir("../resources//snopesData"):
         with open("../resources//snopesData/" + file_, 'r') as doc:
             fileData =  json.loads(doc.read())
 
-        if fileData['Credibility'] == 'false':
+        if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
             truthValue = 0
-        else:
+        elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
             truthValue = 1
 
         wordBag = word_tokenize(fileData['Description'])
@@ -63,8 +63,8 @@ p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1],model1, '-b 1')
 
 print(f"p_labels: {p_labels}  p_acc: {p_acc}   p_vals:  {p_vals}")
 
-print("****** Weighted *******")
-p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1],model2, '-b 1')
-print(f"p_labels: {p_labels}  p_acc: {p_acc}   p_vals:  {p_vals}")
+# print("****** Weighted *******")
+# p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1],model2, '-b 1')
+# print(f"p_labels: {p_labels}  p_acc: {p_acc}   p_vals:  {p_vals}")
 
 

@@ -4,7 +4,6 @@ from nltk import word_tokenize
 from nltk import sent_tokenize
 from nltk import ngrams
 from collections import defaultdict
-from util import featureBag
 
 def pullArticleText(webAddress):
     """
@@ -112,7 +111,6 @@ def prepTextForClassification(text, featDict):
         param: text: string to be processed 
         param: features: dictionary of possible features for the model
     """
-    featDict = featureBag.getFeatureFile("../resources/feats.pickle")
     wordBag = word_tokenize(text)
     wordBag = [word.lower() for word in wordBag if word.isalpha()]
 
