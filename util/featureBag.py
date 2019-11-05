@@ -46,11 +46,9 @@ def createFeatureFile(sourceDir, outputAdr):
 
             #grab description and chunk the data
             wordBag = word_tokenize(fileData['Description'])
-            wordBag = [word.lower() for word in wordBag if word.isalpha()]
             wordBagTagged = nltk.pos_tag(wordBag)
-
-            #remove named entities (eg. 'Trump','Obama') to prevent bias
             wordBag = [word[0] for word in wordBagTagged if ((word[1] != 'NNP') & (word[1] != 'NNPS'))]
+            wordBag = [word.lower() for word in wordBag if word.isalpha()]
 
             #get uni/bigrams
             unigrams = nltk.ngrams(wordBag,n=1)
@@ -65,6 +63,20 @@ def createFeatureFile(sourceDir, outputAdr):
                 if gram not in features:
                     count +=1
                     features[gram] = count
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #Save to file
     with open(outputAdr, 'wb') as handle:

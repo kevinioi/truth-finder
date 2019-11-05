@@ -13,8 +13,10 @@ from util import featureBag
 from collections import defaultdict
 
 
-model1 = llu.load_model("model.liblin")
-model2 = llu.load_model("modelWeight.liblin")
+#load pre-trained models
+model1 = llu.load_model("../resources//stance_models/model.liblin")
+model2 = llu.load_model("../resources//stance_models/modelWeight.liblin")
+
 featDict = featureBag.getFeatureFile("../resources/feats.pickle")
 
 
@@ -23,9 +25,9 @@ truthValue = None
 
 
 #load data from all source files
-for file_ in os.listdir("../..//data"):
+for file_ in os.listdir("../resources//snopesData"):
     if file_.endswith(".json"):
-        with open("../..//data/" + file_, 'r') as doc:
+        with open("../resources//snopesData/" + file_, 'r') as doc:
             fileData =  json.loads(doc.read())
 
         if fileData['Credibility'] == 'false':
@@ -55,6 +57,7 @@ for file_ in os.listdir("../..//data"):
                 features[featDict[gram]] += 1
         dataSet[1].append(dict(features))
     break
+
 print("****** Unweighted *******")
 p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1],model1, '-b 1')
 

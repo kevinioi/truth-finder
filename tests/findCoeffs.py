@@ -15,7 +15,6 @@ with open("/Users//kevin//Documents//Ryerson//GitHub//Other//NLP_Project//coef",
         if value > 0.3:
             print(value, i)
 
-    
         if value < -0.4:
             print(value, i)
 

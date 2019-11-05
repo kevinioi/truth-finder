@@ -15,7 +15,6 @@ from collections import defaultdict
 
 myDict = featureBag.getFeatureFile("../resources/feats.pickle")
 
-
 # print(myDict[('spoof',)])
 
 for i in myDict.keys():

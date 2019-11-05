@@ -20,9 +20,9 @@ featDict = featureBag.getFeatureFile("../resources/feats.pickle")
 # truthValue = None
 
 # #load data from all source files
-# for file_ in os.listdir("../..//data"):
+# for file_ in os.listdir("../resources//snopesData"):
 #     if file_.endswith(".json"):
-#         with open("../..//data/" + file_, 'r') as doc:
+#         with open("../resources//snopesData/" + file_, 'r') as doc:
 #             fileData =  json.loads(doc.read())
 
 #         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
@@ -54,21 +54,14 @@ featDict = featureBag.getFeatureFile("../resources/feats.pickle")
 # with open('dataSet.pickle', 'wb') as handle:
     # pickle.dump(dataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-with open('dataSet.pickle', 'rb') as handle:
+with open('../resources/dataSet.pickle', 'rb') as handle:
     dataSet = pickle.load(handle)
-
-# usDataSet = ([],[])
-
-# for i, x in enumerate(dataSet[0]):
-#     if x == 1:
-#         usDataSet[0].append(x)
-#         usDataSet[1].append((dataSet[1])[i])
 
 model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 1')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5 -v 10')
 
-llu.save_model("gen5.model",model)
+# llu.save_model("gen5.model",model)
 
 #llu.predict([1],[{1:45,2:2,3:54,4:1.5}],model)
 
