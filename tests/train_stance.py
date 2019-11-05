@@ -57,9 +57,9 @@ featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 with open('../resources/dataSet.pickle', 'rb') as handle:
     dataSet = pickle.load(handle)
 
-# model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5')
+model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 1')
-model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5 -v 10')
+# model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5 -v 10')
 
 # llu.save_model("gen2v1.model",model)
 

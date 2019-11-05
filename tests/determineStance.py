@@ -31,4 +31,4 @@ sys.path.append('../')
 #     # p_labels, p_acc, p_vals = llu.predict( [0], [textProcessor.prepTextForClassification(r,featDict)],model1, '-b 1')
 
 from util import featureBag
-featureBag.createFeatureFile('../resources//snopesData/', 'featsV2.pickle')
+featureBag.createFeatureFile('../resources//snopesData/', '../resources//featsV2.pickle')
