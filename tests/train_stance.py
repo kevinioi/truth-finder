@@ -11,56 +11,64 @@ from liblinearpkg import *
 from liblinearpkg import liblinearutil as llu
 from util import featureBag
 from collections import defaultdict
+import pickle
 
 #dictionary containing all possible features 
 featDict = featureBag.getFeatureFile("../resources/feats.pickle")
 
-dataSet = ([], [])
-truthValue = None
+# dataSet = ([], [])
+# truthValue = None
 
-#load data from all source files
-for file_ in os.listdir("../..//data"):
-    if file_.endswith(".json"):
-        with open("../..//data/" + file_, 'r') as doc:
-            fileData =  json.loads(doc.read())
+# #load data from all source files
+# for file_ in os.listdir("../..//data"):
+#     if file_.endswith(".json"):
+#         with open("../..//data/" + file_, 'r') as doc:
+#             fileData =  json.loads(doc.read())
 
-        if fileData['Credibility'] == 'false':
-            truthValue = 0
-        else:
-            truthValue = 1
+#         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
+#             truthValue = 0
+#         elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
+#             truthValue = 1
 
-        wordBag = word_tokenize(fileData['Description'])
-        wordBag = [word.lower() for word in wordBag if word.isalpha()]
-        wordBagTagged = nltk.pos_tag(wordBag)
+#         wordBag = word_tokenize(fileData['Description'])
+#         wordBagTagged = nltk.pos_tag(wordBag)
+#         wordBag = [word[0] for word in wordBagTagged if ((word[1] != 'NNP') & (word[1] != 'NNPS'))]
+#         wordBag = [word.lower() for word in wordBag if word.isalpha()]
 
-        #remove named entities (eg. 'Trump','Obama') to prevent bias
-        wordBag = [word[0] for word in wordBagTagged if ((word[1] != 'NNP') & (word[1] != 'NNPS'))]
-
-        #get uni/bigrams
-        unigrams = nltk.ngrams(wordBag,n=1)
-        bigrams = nltk.ngrams(wordBag,n=2)
+#         #get uni/bigrams
+#         unigrams = nltk.ngrams(wordBag,n=1)
+#         bigrams = nltk.ngrams(wordBag,n=2)
         
-        #add data to training/testing Sample
-        dataSet[0].append(truthValue)
-        features = {}
-        
-        for value in featDict.values():
-            features[value] = 0
+#         #add data to training/testing Sample
+#         dataSet[0].append(truthValue)
+#         features = defaultdict(featureBag.defDictFunc())
 
-        for gram in unigrams:
-            if featDict[gram] != 0:#don't count gram that aren't known features
-                features[featDict[gram]] += 1
-        for gram in bigrams:
-            if featDict[gram] != 0:#don't count gram that aren't known features
-                features[featDict[gram]] += 1
-        dataSet[1].append(dict(features))
+#         for gram in unigrams:
+#             if featDict[gram] != 0:#don't count gram that aren't known features
+#                 features[featDict[gram]] += 1
+#         for gram in bigrams:
+#             if featDict[gram] != 0:#don't count gram that aren't known features
+#                 features[featDict[gram]] += 1
+#         dataSet[1].append(dict(features))
     
+# with open('dataSet.pickle', 'wb') as handle:
+    # pickle.dump(dataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 4')
-# model = llu.train(dataSet[0], dataSet[1], '-s 0 -wi 4')
-# model = llu.train(dataSet[0], dataSet[1], '-s 0 -v 10')
+with open('dataSet.pickle', 'rb') as handle:
+    dataSet = pickle.load(handle)
 
-llu.save_model("modelWeight.liblin",model)
+# usDataSet = ([],[])
+
+# for i, x in enumerate(dataSet[0]):
+#     if x == 1:
+#         usDataSet[0].append(x)
+#         usDataSet[1].append((dataSet[1])[i])
+
+model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5')
+# model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 1')
+# model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5 -v 10')
+
+llu.save_model("gen5.model",model)
 
 #llu.predict([1],[{1:45,2:2,3:54,4:1.5}],model)
 
