@@ -51,18 +51,14 @@ featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 #                 features[featDict[gram]] += 1
 #         dataSet[1].append(dict(features))
     
-# with open('dataSet.pickle', 'wb') as handle:
-    # pickle.dump(dataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# with open('dataSetV2.pickle', 'wb') as handle:
+#     pickle.dump(dataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-with open('../resources/dataSet.pickle', 'rb') as handle:
+with open('../resources/dataSetV2.pickle', 'rb') as handle:
     dataSet = pickle.load(handle)
 
 model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 1')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 5 -v 10')
 
-# llu.save_model("gen2v1.model",model)
-
-#llu.predict([1],[{1:45,2:2,3:54,4:1.5}],model)
-
-# llu.save_model("testModel", model)
+llu.save_model("../resources//models/gen2v1.model",model)
