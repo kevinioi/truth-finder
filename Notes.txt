@@ -22,6 +22,22 @@ To Do
             -> -s 6  L1 regularized logistic regression
             -> -wi 4 -c 1 weight support more heavily to balance training data
 
+- Predicting
+    - -> -q for quiet prediction
+    - -> -b 1 for full prob output
+
+Google Search
+    - https://www.google.com/search?q=test+this
+        import requests
+        def googleSearch(query):
+            with requests.session() as c:
+                url = 'https://www.google.co.in'
+                query = {'q': query}
+                urllink = requests.get(url, params=query)
+                print urllink.url
+        googleSearch('Linkin Park')
+
+
 - Credibility Assessment
     - During testing
         - Keep track of # of correct stances and incorrect stances

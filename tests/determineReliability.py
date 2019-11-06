@@ -32,20 +32,20 @@ for file_ in os.listdir("../resources//snopesData"):
 
         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
             truthValue = 0
-        elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
+        else:#fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true'
             truthValue = 1
 
-        for page in fileData["Google Results"]:
-            for resultsDict in page.values():
-                for source in resultsDict:
+        for page in fileData["Google Results"]:#load page of google results
+            for resultsDict in page.values():#load sources from google page
+                for source in resultsDict:#process each source
+                    if source["domain"] != "www.snopes.com":
                         try:
                             text = textProcessor.pullArticleText(source["link"])
                             snippets = textProcessor.getSnippets(text, 4, fileData["Claim"])
                             probSum = [0,0]
 
-                            print(snippets)
                             for s in snippets:
-                                p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepTextForClassification(s,featDict)], model, '-b 1')
+                                p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepTextForClassification(s,featDict)], model, '-b 1 -q')
                                 probSum[0] += (p_vals[0])[0]
                                 probSum[1] += (p_vals[0])[1]
 
@@ -56,10 +56,10 @@ for file_ in os.listdir("../resources//snopesData"):
                                 (reliability[source["domain"]])[1] += 1#incorrect
                         except:
                             continue
-                break
-            break
-        break
-    break
+        break#each file
+    break#each file?
+
+
 print(reliability)
 
 """
