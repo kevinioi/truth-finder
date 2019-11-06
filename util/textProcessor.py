@@ -28,41 +28,6 @@ def pullArticleText(webAddress):
     return articleText
 
 
-def getSnippets(textSections, maxlen=1):
-    """
-    Return list of all possible snippets of text ranging from 1 sentence to 'maxlen' sentences
-
-    param:textSections: list of sections of text to be processed into snippets
-        Each string in list will be treated as a separate text. Will not combine
-        sentences from different texts  
-    """
-    snippets = []
-
-    for section in textSections:
-        sectionSnips = defaultdict(lambda : [])
-        for sentence in sent_tokenize(section):
-            sectionSnips[1].append(sentence)                     
-
-        if(maxlen>1):
-            for snipLength in range(2, maxlen+1):#make list of sentence of each size requested
-                index = 0
-                if snipLength <= len(sectionSnips[1]):
-                    while index < len(sectionSnips[1]):#loop through all previously read sentences
-                        sip = (sectionSnips[1])[index]
-                        activeIndex = index + 1
-                        while activeIndex-index < snipLength and activeIndex<len(sectionSnips[1]):
-                            sip += " " + (sectionSnips[1])[activeIndex]
-                            activeIndex += 1
-                        if activeIndex-index == snipLength:
-                            sectionSnips[snipLength].append(sip)
-                        index += 1
-        for snipGroup in sectionSnips.keys():
-            for snip in sectionSnips[snipGroup]:
-                snippets.append(snip)
-
-    return snippets
-
-
 def calcOverlap(claim, chunk):
     """
         Calculates the percent of the chunk that overlaps with the claim
@@ -103,6 +68,51 @@ def calcOverlap(claim, chunk):
         overlap = 0.0
         pass
     return overlap
+
+def getSnippets(textSections, maxlen=1, claim = ""):
+    """
+    Return list of all possible snippets of text ranging from 1 sentence to 'maxlen' sentences
+
+    param:textSections: list of sections of text to be processed into snippets
+        Each string in list will be treated as a separate text. Will not combine
+        sentences from different texts
+    param: maxlen: the maximum number of sentences each snippet will contain (default 0)
+    paran: claim: if wanting only snippets that are relevent to a specific chunk
+                    input chunk here
+    """
+    snippets = []
+
+    for section in textSections:
+        sectionSnips = defaultdict(lambda : [])
+        for sentence in sent_tokenize(section):
+            sectionSnips[1].append(sentence)                     
+
+        if(maxlen>1):
+            for snipLength in range(2, maxlen+1):#make list of sentence of each size requested
+                index = 0
+                if snipLength <= len(sectionSnips[1]):
+                    while index < len(sectionSnips[1]):#loop through all previously read sentences
+                        sip = (sectionSnips[1])[index]
+                        activeIndex = index + 1
+                        while activeIndex-index < snipLength and activeIndex<len(sectionSnips[1]):
+                            sip += " " + (sectionSnips[1])[activeIndex]
+                            activeIndex += 1
+                        if activeIndex-index == snipLength:
+                            sectionSnips[snipLength].append(sip)
+                        index += 1
+        for snipGroup in sectionSnips.keys():
+            for snip in sectionSnips[snipGroup]:
+                snippets.append(snip)
+
+    if claim != "":
+        relevent = set()
+        for snip in snippets:
+            if calcOverlap(claim, snip) >= 0.4:
+                relevent.add(snip)
+        return list(relevent)
+
+    return snippets
+
 
 def prepTextForClassification(text, featDict):
     """

@@ -13,13 +13,13 @@ from util import featureBag
 from collections import defaultdict
 
 
-myDict = featureBag.getFeatureFile("../resources/feats.pickle")
+# myDict = featureBag.getFeatureFile("../resources/feats.pickle")
 
 # print(myDict[('spoof',)])
 
-for i in myDict.keys():
-    if myDict[i] == 317:
-        print(i)
+# for i in myDict.keys():
+#     if myDict[i] == 317:
+#         print(i)
 
 
 # for i, x in enumerate(myDict):
@@ -34,19 +34,19 @@ for i in myDict.keys():
     count refute and support
 """
 
-# true = 0
-# false = 0
+true = 0
+false = 0
 
-# for file_ in os.listdir("../..//data"):
-#     if file_.endswith(".json"):
-#         with open("../..//data/" + file_, 'r') as doc:
-#             fileData =  json.loads(doc.read())
+for file_ in os.listdir("../resources//snopesData"):
+    if file_.endswith(".json"):
+        with open("../resources//snopesData/" + file_, 'r') as doc:
+            fileData =  json.loads(doc.read())
 
-#         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
-#             false +=1
-#         elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
-#             true += 1
+        if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
+            false +=1
+        elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
+            true += 1
 
-# print(true)
-# print(false)
-# print(false/true)
+print(true)
+print(false)
+print(false/true)
