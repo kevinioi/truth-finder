@@ -1,9 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
-from nltk import word_tokenize
-from nltk import sent_tokenize
-from nltk import ngrams
+from nltk import word_tokenize, sent_tokenize, ngrams
 from collections import defaultdict
+from nltk.stem import PorterStemmer
+
 
 def pullArticleText(webAddress):
     """
@@ -21,8 +21,6 @@ def pullArticleText(webAddress):
     for article in soup.find_all('div'):
         try:
             articleText.append(article.text)
-
-            # articleText.append(article.find('p').text)
         except:
             continue
     return articleText
@@ -35,14 +33,23 @@ def calcOverlap(claim, chunk):
         returns float representing percent overlap
     """
     overlap = 0.0
+    ps = PorterStemmer()
 
     claimWords = [word.lower() for word in word_tokenize(claim) if word.isalpha()]
+    claimStems = [ps.stem(word.lower()) for word in word_tokenize(claim) if word.isalpha()]
     chunkWords = [word.lower() for word in word_tokenize(chunk) if word.isalpha()]
+    chunkStems = [ps.stem(word.lower()) for word in word_tokenize(chunk) if word.isalpha()]
 
     claimUnigrams = []
     claimBigrams = []
     chunkUnigrams = []
     chunkBigrams = []
+    
+    claimUnigramsStem = []
+    claimBigramsStem = []
+    chunkUnigramsStem = []
+    chunkBigramsStem = []
+
     for gram in ngrams(claimWords,n=1):
         claimUnigrams.append(gram)
     for gram in ngrams(claimWords,n=2):
@@ -51,6 +58,15 @@ def calcOverlap(claim, chunk):
         chunkUnigrams.append(gram)
     for gram in ngrams(chunkWords,n=2):
         chunkBigrams.append(gram)
+
+    for gram in ngrams(claimStems,n=1):
+        claimUnigramsStem.append(gram)
+    for gram in ngrams(claimStems,n=2):
+        claimBigramsStem.append(gram)
+    for gram in ngrams(chunkStems,n=1):
+        chunkUnigramsStem.append(gram)
+    for gram in ngrams(chunkStems,n=2):
+        chunkBigramsStem.append(gram)
 
     uniOverlap = 0.0
     biOverlap = 0.0
@@ -62,11 +78,19 @@ def calcOverlap(claim, chunk):
         if bigram in claimBigrams:
             biOverlap += 1.0
 
+    for unigram in chunkUnigramsStem:
+        if unigram in claimUnigramsStem:
+            uniOverlap += 1.0
+    for bigram in chunkBigramsStem:
+        if bigram in claimBigramsStem:
+            biOverlap += 1.0
+
     try:
-        overlap = (uniOverlap + biOverlap) / (len(chunkUnigrams) + len(chunkBigrams))
+        overlap = (uniOverlap + biOverlap) / (len(chunkUnigrams) + len(chunkUnigramsStem))
     except:
         overlap = 0.0
         pass
+
     return overlap
 
 def getSnippets(textSections, maxlen=1, claim = ""):
@@ -107,7 +131,7 @@ def getSnippets(textSections, maxlen=1, claim = ""):
     if claim != "":
         relevent = set()
         for snip in snippets:
-            if calcOverlap(claim, snip) >= 0.4:
+            if calcOverlap(claim, snip) >= 0.3:
                 relevent.add(snip)
         return list(relevent)
 
