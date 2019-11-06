@@ -18,12 +18,16 @@ def pullArticleText(webAddress):
         raise e
 
     soup = BeautifulSoup(webSource, 'lxml')
-    for article in soup.find_all('div'):
+    for section in soup.find_all('div'):
         try:
-            articleText.append(article.text)
-        except:
-            continue
+            # articleText.append(section.text)
+            articleText.append("".join(line.strip() for line in section.text.split("\n")))
+
+        except Exception as e:
+            raise e
     return articleText
+
+
 
 
 def calcOverlap(claim, chunk):
@@ -36,9 +40,9 @@ def calcOverlap(claim, chunk):
     ps = PorterStemmer()
 
     claimWords = [word.lower() for word in word_tokenize(claim) if word.isalpha()]
-    claimStems = [ps.stem(word.lower()) for word in word_tokenize(claim) if word.isalpha()]
+    claimStems = [ps.stem(word) for word in claimWords]
     chunkWords = [word.lower() for word in word_tokenize(chunk) if word.isalpha()]
-    chunkStems = [ps.stem(word.lower()) for word in word_tokenize(chunk) if word.isalpha()]
+    chunkStems = [ps.stem(word) for word in chunkWords]
 
     claimUnigrams = []
     claimBigrams = []
@@ -86,7 +90,11 @@ def calcOverlap(claim, chunk):
             biOverlap += 1.0
 
     try:
-        overlap = (uniOverlap + biOverlap) / (len(chunkUnigrams) + len(chunkUnigramsStem))
+        overlap = ((uniOverlap + biOverlap) / (len(chunkUnigrams) + len(chunkBigramsStem)))
+        if ((uniOverlap + biOverlap) / (len(claimUnigrams) + len(claimBigrams))) > overlap:
+            overlap = ((uniOverlap + biOverlap) / (len(claimUnigrams) + len(claimBigrams)))
+
+
     except:
         overlap = 0.0
         pass
@@ -131,7 +139,7 @@ def getSnippets(textSections, maxlen=1, claim = ""):
     if claim != "":
         relevent = set()
         for snip in snippets:
-            if calcOverlap(claim, snip) >= 0.3:
+            if calcOverlap(claim, snip) >= 0.4:
                 relevent.add(snip)
         return list(relevent)
 
