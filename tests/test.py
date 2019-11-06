@@ -19,7 +19,9 @@ import bs4
 # featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 
 
+s = [[1,2], [1,2], [1,2]]
 
-text = textProcessor.pullArticleText("https://www.snopes.com/fact-check/meijer-coupon-scam/")
 
-print(text)
+# text = textProcessor.pullArticleText("https://www.snopes.com/fact-check/meijer-coupon-scam/")
+
+# print(text)

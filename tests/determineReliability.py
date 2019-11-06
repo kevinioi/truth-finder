@@ -42,12 +42,21 @@ for file_ in os.listdir("../resources//snopesData"):
                         try:
                             text = textProcessor.pullArticleText(source["link"])
                             snippets = textProcessor.getSnippets(text, 4, fileData["Claim"])
-                            probSum = [0,0]
 
-                            for s in snippets:
-                                p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepTextForClassification(s,featDict)], model, '-b 1 -q')
-                                probSum[0] += (p_vals[0])[0]
-                                probSum[1] += (p_vals[0])[1]
+                            snipData = textProcessor.prepListForClassification(snippets,featDict)
+                            p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
+
+                            probSum = [0,0]
+                            for probVals in p_vals:
+                                probSum[0] += probVals[0]
+                                probSum[1] += probVals[1]
+                            probSum[0] /= len(p_vals)
+                            probSum[1] /= len(p_vals)
+
+                            # for s in snippets:
+                            #     p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepTextForClassification(s,featDict)], model, '-b 1 -q')
+                            #     probSum[0] += (p_vals[0])[0]
+                            #     probSum[1] += (p_vals[0])[1]
 
                             #check if the stance of the article aligns with known truth value of claim
                             if (probSum[truthValue] > probSum[1]):

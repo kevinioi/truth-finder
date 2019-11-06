@@ -145,6 +145,35 @@ def getSnippets(textSections, maxlen=1, claim = ""):
 
     return snippets
 
+def prepListForClassification(text, featDict):
+    """
+        Returns bigrams and unigram from text. Usable to define problem for linlinear predictor
+
+        param: text: string to be processed 
+        param: features: dictionary of possible features for the model
+    """
+    dataList = []
+
+    for block in text:
+        wordBag = word_tokenize(block)
+        wordBag = [word.lower() for word in wordBag if word.isalpha()]
+
+        #get uni/bigrams
+        unigrams = ngrams(wordBag,n=1)
+        bigrams = ngrams(wordBag,n=2)
+        
+        #add data to training/testing Sample
+        features = defaultdict(lambda:0)
+        for gram in unigrams:
+            if featDict[gram] != 0:#don't count gram that aren't known features
+                features[featDict[gram]] += 1
+        for gram in bigrams:
+            if featDict[gram] != 0:#don't count gram that aren't known features
+                features[featDict[gram]] += 1
+        dataList.append(dict(features))
+    return dataList
+
+
 
 def prepTextForClassification(text, featDict):
     """
