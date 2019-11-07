@@ -5,7 +5,7 @@ from collections import defaultdict
 from nltk.stem import PorterStemmer
 
 
-def pullArticleText(webAddress, timeoutTime = 4):
+def pullArticleText(webAddress, timeoutTime = 3):
     """
         Return: list of text representing each section of webpage
 
@@ -66,18 +66,16 @@ def calcOverlap(claim, chunk):
 
     return overlap
 
-def getSnippets(textSections, maxlen=1, claim = ""):
+def getSnippets(textSections, maxlen=1):
     """
-    Return list of all possible snippets of text ranging from 1 sentence to 'maxlen' sentences
+    Return list of all possible unique snippets of text ranging from 1 sentence to 'maxlen' sentences
 
     param:textSections: list of sections of text to be processed into snippets
         Each string in list will be treated as a separate text. Will not combine
         sentences from different texts
     param: maxlen: the maximum number of sentences each snippet will contain (default 0)
-    paran: claim: if wanting only snippets that are relevent to a specific chunk
-                    input chunk here
     """
-    snippets = []
+    snippets = set()
 
     for section in textSections:
         sectionSnips = defaultdict(lambda : [])
@@ -99,16 +97,28 @@ def getSnippets(textSections, maxlen=1, claim = ""):
                         index += 1
         for snipGroup in sectionSnips.keys():
             for snip in sectionSnips[snipGroup]:
-                snippets.append(snip)
+                snippets.add(snip)
 
-    if claim != "":
-        relevent = set()
-        for snip in snippets:
-            if calcOverlap(claim, snip) >= 0.2:
-                relevent.add(snip)
-        return list(relevent)
+    return list(snippets)
 
-    return snippets
+def getRelevence(claim, snippets):
+    """
+        returns list of tuples containing the snippets with overlap score of over n
+            and their respective overlap score
+            [(snippet, overlapScore), ...]  -> [(String, float), ...]
+
+        param: claim: string to compare snippets to
+        param: snippets: list of snippets to evaluate
+    """
+    releventSnips = [[],[]]
+
+    for snip in snippets:
+        overlap = calcOverlap(claim, snip)
+        if overlap >= 0.3:
+            releventSnips[0].append(snip)
+            releventSnips[1].append(overlap)
+    return releventSnips
+
 
 def prepListForClassification(text, featDict):
     """

@@ -18,11 +18,12 @@ import bs4
 import requests
 import eventlet
 
-mydict = {'www.mlive.com': [1, 0], 'www.wilx.com': [1, 0], 'www.freep.com': [1, 0], 'woodtv.com': [1, 0], 'meijermadness.com': [0, 1], 'www.bargainstobounty.com': [1, 0], 'www.cheapassgamer.com': [1, 0], 'www.prnewswire.com': [0, 1], 'www.onlinethreatalerts.com':[1, 0], 'www.amittenfullofsavings.com': [0, 1], 'www.bargainist.com': [1, 0], 'bargainbriana.com': [0, 1], 'browst.com': [1, 0], 'stephaniesavings.wordpress.com': [0, 1], 'www.tumblr.com': [1, 0], 'slickdeals.net': [0, 1]}
+# mydict = {'www.mlive.com': [1, 0], 'www.wilx.com': [1, 0], 'www.freep.com': [1, 0], 'woodtv.com': [1, 0], 'meijermadness.com': [0, 1], 'www.bargainstobounty.com': [1, 0], 'www.cheapassgamer.com': [1, 0], 'www.prnewswire.com': [0, 1], 'www.onlinethreatalerts.com':[1, 0], 'www.amittenfullofsavings.com': [0, 1], 'www.bargainist.com': [1, 0], 'bargainbriana.com': [0, 1], 'browst.com': [1, 0], 'stephaniesavings.wordpress.com': [0, 1], 'www.tumblr.com': [1, 0], 'slickdeals.net': [0, 1]}
 
-for i, text in enumerate(mydict):
-    print(i, text, mydict[text])
+# for i, text in enumerate(mydict):
+#     print(i, text, mydict[text])
 
 # text = textProcessor.pullArticleText("https://www.snopes.com/fact-check/meijer-coupon-scam/")
+text = textProcessor.pullArticleText("http://blogmaverick.com/2007/05/14/wanted-new-tv-show-ideas/")
 
-# print(text)
+print(len(text))

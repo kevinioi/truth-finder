@@ -22,9 +22,15 @@ reliability = defaultdict(lambda : [0,0])
 featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 model = llu.load_model("../resources/models/gen2v1.model")
 
+count = 0
+
 #load data from all source files
 for file_ in os.listdir("../resources//partialSnopes"):    
     truthValue = None
+    print("********************************************************")
+    print(file_)
+    print(count)
+    count+=1
 
     if file_.endswith(".json"):
         with open("../resources//partialSnopes/" + file_, 'r') as doc:
@@ -42,20 +48,20 @@ for file_ in os.listdir("../resources//partialSnopes"):
                         print(source["domain"])
                         try:
                             text = textProcessor.pullArticleText(source["link"])
-                            snippets = textProcessor.getSnippets(text, 4, fileData["Claim"])
+                            snippets = textProcessor.getSnippets(text, 4)
+                            relventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
+                            numRelevent = len(relventSnips[0])
 
-                            releventSnips = len(snippets)
-
-                            if releventSnips > 0:
-                                snipData = textProcessor.prepListForClassification(snippets,featDict)
+                            if numRelevent > 0:
+                                snipData = textProcessor.prepListForClassification(relventSnips[0],featDict)
                                 p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
 
                                 probSum = [0,0]
-                                for probVals in p_vals:
-                                    probSum[0] += probVals[0]
-                                    probSum[1] += probVals[1]
-                                probSum[0] /= releventSnips
-                                probSum[1] /= releventSnips
+                                for index, probVals in enumerate(p_vals):
+                                    probSum[0] += (relventSnips[1])[index]*probVals[0]
+                                    probSum[1] += (relventSnips[1])[index]*probVals[1]
+                                probSum[0] /= numRelevent
+                                probSum[1] /= numRelevent
 
                                 if (probSum[truthValue] > probSum[1]):
                                     (reliability[source["domain"]])[0] += 1#correct
@@ -64,10 +70,10 @@ for file_ in os.listdir("../resources//partialSnopes"):
                         except:
                             continue
                     # break#each entry in page
-                # break#each page?
-            # break #each page.
-        # break#each file
-    # break#each file?
+                break#each page?
+            break #each page.
+        break#each file
+    break#each file?
 
 with open("reliability.txt", "w") as fp:
     for r in reliability:
