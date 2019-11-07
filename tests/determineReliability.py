@@ -38,7 +38,7 @@ for file_ in os.listdir("../resources//partialSnopes"):
 
         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
             truthValue = 0
-        else:#fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true'
+        else:
             truthValue = 1
 
         for page in fileData["Google Results"]:#load page of google results
@@ -49,19 +49,27 @@ for file_ in os.listdir("../resources//partialSnopes"):
                         try:
                             text = textProcessor.pullArticleText(source["link"])
                             snippets = textProcessor.getSnippets(text, 4)
-                            relventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
-                            numRelevent = len(relventSnips[0])
-
+                            releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
+                            numRelevent = len(releventSnips[0])
+                                
                             if numRelevent > 0:
-                                snipData = textProcessor.prepListForClassification(relventSnips[0],featDict)
+                                snipData = textProcessor.prepListForClassification(releventSnips[0],featDict)
                                 p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
 
-                                probSum = [0,0]
+                                stanceImpact = []
                                 for index, probVals in enumerate(p_vals):
-                                    probSum[0] += (relventSnips[1])[index]*probVals[0]
-                                    probSum[1] += (relventSnips[1])[index]*probVals[1]
-                                probSum[0] /= numRelevent
-                                probSum[1] /= numRelevent
+                                    probs = [0,0]
+                                    probs[0] = (releventSnips[1])[index]*probVals[0]
+                                    probs[1] = (releventSnips[1])[index]*probVals[1]
+                                    stanceImpact.append(probs)
+                                stanceImpact.sort(key= lambda instance: max(instance[0], instance[1]),reverse=True)
+
+                                probSum = [0,0]
+                                for index, probVals in enumerate(stanceImpact[:10]):
+                                    probSum[0] += probVals[0]
+                                    probSum[1] += probVals[1]
+                                probSum[0] /= index
+                                probSum[1] /= index
 
                                 if (probSum[truthValue] > probSum[1]):
                                     (reliability[source["domain"]])[0] += 1#correct
@@ -70,12 +78,12 @@ for file_ in os.listdir("../resources//partialSnopes"):
                         except:
                             continue
                     # break#each entry in page
-                break#each page?
-            break #each page.
+                # break#each page?
+            # break #each page.
         break#each file
     break#each file?
 
-with open("reliability.txt", "w") as fp:
+with open("reliability2.txt", "w") as fp:
     for r in reliability:
         articleStances = reliability[r]
         percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])

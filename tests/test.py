@@ -24,6 +24,21 @@ import eventlet
 #     print(i, text, mydict[text])
 
 # text = textProcessor.pullArticleText("https://www.snopes.com/fact-check/meijer-coupon-scam/")
-text = textProcessor.pullArticleText("http://blogmaverick.com/2007/05/14/wanted-new-tv-show-ideas/")
+# text = textProcessor.pullArticleText("http://portal.clubrunner.ca/2010/Stories")
 
-print(len(text))
+# print(len(text))
+
+# for file_ in os.listdir("../resources//partialSnopes"):    
+#     print(file_)
+
+test = []
+test.append([1,11,3])
+test.append([4,2,3])
+test.append([2,2,9])
+test.append([3,6,3])
+
+test.sort(key= lambda instance: max(instance[1], instance[2]),reverse=True)
+
+print(test)
+
+
