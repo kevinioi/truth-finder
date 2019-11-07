@@ -44,17 +44,22 @@ for file_ in os.listdir("../resources//partialSnopes"):
         for page in fileData["Google Results"]:#load page of google results
             for resultsDict in page.values():#load sources from google page
                 for source in resultsDict:#process each source
-                    if (source["domain"] != "www.snopes.com"):
+                    if (source["domain"] != "www.snopes.com") and (source["domain"] == "www.truthorfiction.com"):
                         print(source["domain"])
                         try:
                             text = textProcessor.pullArticleText(source["link"])
                             snippets = textProcessor.getSnippets(text, 4)
                             releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
                             numRelevent = len(releventSnips[0])
-                                
+                            
                             if numRelevent > 0:
                                 snipData = textProcessor.prepListForClassification(releventSnips[0],featDict)
                                 p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
+
+                                for i, snip in enumerate(releventSnips[0]):
+                                    print("*******************")
+                                    print(p_vals[i])
+                                    print(snip)
 
                                 stanceImpact = []
                                 for index, probVals in enumerate(p_vals):
@@ -75,8 +80,9 @@ for file_ in os.listdir("../resources//partialSnopes"):
                                     (reliability[source["domain"]])[0] += 1#correct
                                 else:
                                     (reliability[source["domain"]])[1] += 1#incorrect
-                        except:
-                            continue
+                        except Exception as e:
+                            # continue
+                            raise e
                     # break#each entry in page
                 # break#each page?
             # break #each page.
