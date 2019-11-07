@@ -15,12 +15,13 @@ from collections import defaultdict
 import pickle
 from util import textProcessor
 import bs4
-#dictionary containing all possible features 
-# featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
+import requests
+import eventlet
 
+mydict = {'www.mlive.com': [1, 0], 'www.wilx.com': [1, 0], 'www.freep.com': [1, 0], 'woodtv.com': [1, 0], 'meijermadness.com': [0, 1], 'www.bargainstobounty.com': [1, 0], 'www.cheapassgamer.com': [1, 0], 'www.prnewswire.com': [0, 1], 'www.onlinethreatalerts.com':[1, 0], 'www.amittenfullofsavings.com': [0, 1], 'www.bargainist.com': [1, 0], 'bargainbriana.com': [0, 1], 'browst.com': [1, 0], 'stephaniesavings.wordpress.com': [0, 1], 'www.tumblr.com': [1, 0], 'slickdeals.net': [0, 1]}
 
-s = [[1,2], [1,2], [1,2]]
-
+for i, text in enumerate(mydict):
+    print(i, text, mydict[text])
 
 # text = textProcessor.pullArticleText("https://www.snopes.com/fact-check/meijer-coupon-scam/")
 

@@ -5,15 +5,16 @@ from collections import defaultdict
 from nltk.stem import PorterStemmer
 
 
-def pullArticleText(webAddress):
+def pullArticleText(webAddress, timeoutTime = 4):
     """
         Return: list of text representing each section of webpage
 
         param: webAddress: the url to be accessed
+        param: timeoutTime: seconds before giving up on request, default 3
     """
     articleText = []
     try:
-        webSource = requests.get(webAddress).text
+        webSource = requests.get(webAddress, timeout=timeoutTime).text
     except Exception as e:
         raise e
 
@@ -27,9 +28,6 @@ def pullArticleText(webAddress):
             raise e
     return articleText
 
-
-
-
 def calcOverlap(claim, chunk):
     """
         Calculates the percent of the chunk that overlaps with the claim
@@ -39,62 +37,29 @@ def calcOverlap(claim, chunk):
     overlap = 0.0
     ps = PorterStemmer()
 
-    claimWords = [word.lower() for word in word_tokenize(claim) if word.isalpha()]
-    claimStems = [ps.stem(word) for word in claimWords]
-    chunkWords = [word.lower() for word in word_tokenize(chunk) if word.isalpha()]
-    chunkStems = [ps.stem(word) for word in chunkWords]
+    claimStems = [ps.stem(word.lower()) for word in word_tokenize(claim) if word.isalpha()]
+    chunkStems = [ps.stem(word.lower()) for word in word_tokenize(chunk) if word.isalpha()]
 
-    claimUnigrams = []
-    claimBigrams = []
-    chunkUnigrams = []
-    chunkBigrams = []
-    
-    claimUnigramsStem = []
-    claimBigramsStem = []
-    chunkUnigramsStem = []
-    chunkBigramsStem = []
+    claimGramsStemmed = []
+    snipGramsStemmed = []
 
-    for gram in ngrams(claimWords,n=1):
-        claimUnigrams.append(gram)
-    for gram in ngrams(claimWords,n=2):
-        claimBigrams.append(gram)
-    for gram in ngrams(chunkWords,n=1):
-        chunkUnigrams.append(gram)
-    for gram in ngrams(chunkWords,n=2):
-        chunkBigrams.append(gram)
-
+    #add all grams to lists
     for gram in ngrams(claimStems,n=1):
-        claimUnigramsStem.append(gram)
+        claimGramsStemmed.append(gram)
     for gram in ngrams(claimStems,n=2):
-        claimBigramsStem.append(gram)
+        claimGramsStemmed.append(gram)
     for gram in ngrams(chunkStems,n=1):
-        chunkUnigramsStem.append(gram)
+        snipGramsStemmed.append(gram)
     for gram in ngrams(chunkStems,n=2):
-        chunkBigramsStem.append(gram)
+        snipGramsStemmed.append(gram)
 
-    uniOverlap = 0.0
-    biOverlap = 0.0
-
-    for unigram in chunkUnigrams:
-        if unigram in claimUnigrams:
-            uniOverlap += 1.0
-    for bigram in chunkBigrams:
-        if bigram in claimBigrams:
-            biOverlap += 1.0
-
-    for unigram in chunkUnigramsStem:
-        if unigram in claimUnigramsStem:
-            uniOverlap += 1.0
-    for bigram in chunkBigramsStem:
-        if bigram in claimBigramsStem:
-            biOverlap += 1.0
+    gramOverlap = 0
+    for gram in claimGramsStemmed:
+        if gram in snipGramsStemmed:
+            gramOverlap += 1.0
 
     try:
-        overlap = ((uniOverlap + biOverlap) / (len(chunkUnigrams) + len(chunkBigramsStem)))
-        if ((uniOverlap + biOverlap) / (len(claimUnigrams) + len(claimBigrams))) > overlap:
-            overlap = ((uniOverlap + biOverlap) / (len(claimUnigrams) + len(claimBigrams)))
-
-
+        overlap = gramOverlap / len(claimGramsStemmed)
     except:
         overlap = 0.0
         pass
@@ -139,7 +104,7 @@ def getSnippets(textSections, maxlen=1, claim = ""):
     if claim != "":
         relevent = set()
         for snip in snippets:
-            if calcOverlap(claim, snip) >= 0.4:
+            if calcOverlap(claim, snip) >= 0.2:
                 relevent.add(snip)
         return list(relevent)
 
@@ -172,8 +137,6 @@ def prepListForClassification(text, featDict):
                 features[featDict[gram]] += 1
         dataList.append(dict(features))
     return dataList
-
-
 
 def prepTextForClassification(text, featDict):
     """

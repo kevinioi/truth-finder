@@ -1,0 +1,5 @@
+www.mlive.com	1.0	[1, 0]
+www.wilx.com	1.0	[1, 0]
+www.freep.com	1.0	[1, 0]
+woodtv.com	1.0	[1, 0]
+meijermadness.com	0.0	[0, 1]

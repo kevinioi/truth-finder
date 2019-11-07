@@ -23,11 +23,11 @@ featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 model = llu.load_model("../resources/models/gen2v1.model")
 
 #load data from all source files
-for file_ in os.listdir("../resources//snopesData"):    
+for file_ in os.listdir("../resources//partialSnopes"):    
     truthValue = None
 
     if file_.endswith(".json"):
-        with open("../resources//snopesData/" + file_, 'r') as doc:
+        with open("../resources//partialSnopes/" + file_, 'r') as doc:
             fileData =  json.loads(doc.read())
 
         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
@@ -38,38 +38,43 @@ for file_ in os.listdir("../resources//snopesData"):
         for page in fileData["Google Results"]:#load page of google results
             for resultsDict in page.values():#load sources from google page
                 for source in resultsDict:#process each source
-                    if source["domain"] != "www.snopes.com":
+                    if (source["domain"] != "www.snopes.com"):
+                        print(source["domain"])
                         try:
                             text = textProcessor.pullArticleText(source["link"])
                             snippets = textProcessor.getSnippets(text, 4, fileData["Claim"])
 
-                            snipData = textProcessor.prepListForClassification(snippets,featDict)
-                            p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
+                            releventSnips = len(snippets)
 
-                            probSum = [0,0]
-                            for probVals in p_vals:
-                                probSum[0] += probVals[0]
-                                probSum[1] += probVals[1]
-                            probSum[0] /= len(p_vals)
-                            probSum[1] /= len(p_vals)
+                            if releventSnips > 0:
+                                snipData = textProcessor.prepListForClassification(snippets,featDict)
+                                p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
 
-                            # for s in snippets:
-                            #     p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepTextForClassification(s,featDict)], model, '-b 1 -q')
-                            #     probSum[0] += (p_vals[0])[0]
-                            #     probSum[1] += (p_vals[0])[1]
+                                probSum = [0,0]
+                                for probVals in p_vals:
+                                    probSum[0] += probVals[0]
+                                    probSum[1] += probVals[1]
+                                probSum[0] /= releventSnips
+                                probSum[1] /= releventSnips
 
-                            #check if the stance of the article aligns with known truth value of claim
-                            if (probSum[truthValue] > probSum[1]):
-                                (reliability[source["domain"]])[0] += 1#correct
-                            else:
-                                (reliability[source["domain"]])[1] += 1#incorrect
+                                if (probSum[truthValue] > probSum[1]):
+                                    (reliability[source["domain"]])[0] += 1#correct
+                                else:
+                                    (reliability[source["domain"]])[1] += 1#incorrect
                         except:
                             continue
-        break#each file
-    break#each file?
+                    # break#each entry in page
+                # break#each page?
+            # break #each page.
+        # break#each file
+    # break#each file?
 
+with open("reliability.txt", "w") as fp:
+    for r in reliability:
+        articleStances = reliability[r]
+        percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])
+        fp.write(r + "\t" + str(percentCorrect) + "\t" + str(articleStances) + "\n")    
 
-print(reliability)
 
 """
 ****************************************************************************************************************
