@@ -1,3 +1,6 @@
+************************
+Notes
+************************
 143 -> duplicate articles
 3573 false -> 3436 false
 
@@ -6,8 +9,56 @@ False --> 3436
 False/True --> 2.6906812842599845
                ~2.7
 
+A portion of the linguistic features lexicon was solely available on the webpage of a Cornel researcher who has moved on from Cornel
+    - the data has since been removed from their site
+    - http://www.mpi-sws.org/˜cristian/Biased_language.html
 
+Eventually directed me wordnet
+Lexcon
+    - University of Illinois at Chicago
+        - https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#:~:targetText=Opinion%20Lexicon%3A%20A%20list%20of,words%20(around%206800%20words).&targetText=Although%20necessary%2C%20having%20an%20opinion,or%20the%20Sentiment%20Analysis%20book.
+    S. Mukherjee, G. Weikum, and C. Danescu-Niculescu-Mizil.
+    People on drugs: Credibility of user statements in health
+    communities. KDD, 2014.
+        - http://resources.mpi-inf.mpg.de/impact/peopleondrugs/peopleondrugs-kdd2014.pdf
+    Theresa Wilson, Janyce Wiebe and Paul Hoffmann (2005). Recognizing Contextual 
+    Polarity in Phrase-Level Sentiment Analysis. Proceedings of HLT/EMNLP 2005,
+    Vancouver, Canada.
+        - 
 
+Assertive:
+    - claim
+    - saw
+Factive:
+    - indicate
+    - indicates
+    - indicated
+    - reveal
+    - reveals
+    - revealed
+    - showedq
+    - show
+    - shows
+    - declare
+    - declared
+    - declares
+Hedge:
+    - may
+Implicatives:
+    - complicit
+Report:
+    - argue
+    - refute
+    - 
+Discourse:
+    - could
+    - if
+    - maybe
+    - should
+    - therefore
+    - actually
+    - although
+    - but
 ************************
 To Do
 ************************

@@ -14,9 +14,25 @@ from util import textProcessor
 from collections import defaultdict
 import pickle
 from util import textProcessor
-import bs4
+from bs4 import BeautifulSoup
 import requests
-import eventlet
+
+
+# def googleSearch(query):
+#     url = 'https://www.google.com/search?q='
+#     queryFormat = ""
+#     for word in query.split(' '):
+#         queryFormat += word + "+"
+#     search = url + queryFormat[:-1]
+#     urllink = requests.get("https://medium.com/@jacob.d.moore1/a-brief-guide-to-web-scraping-google-api-and-finding-a-job-with-one-of-the-top-100-companies-in-32c1221f82d8")
+
+#     # soup = BeautifulSoup(urllink.content, 'lxml')
+
+#     with open("test.txt", 'w') as file_:
+#         print(urllink.content)
+
+# googleSearch('Linkin Park')
+
 
 # mydict = {'www.mlive.com': [1, 0], 'www.wilx.com': [1, 0], 'www.freep.com': [1, 0], 'woodtv.com': [1, 0], 'meijermadness.com': [0, 1], 'www.bargainstobounty.com': [1, 0], 'www.cheapassgamer.com': [1, 0], 'www.prnewswire.com': [0, 1], 'www.onlinethreatalerts.com':[1, 0], 'www.amittenfullofsavings.com': [0, 1], 'www.bargainist.com': [1, 0], 'bargainbriana.com': [0, 1], 'browst.com': [1, 0], 'stephaniesavings.wordpress.com': [0, 1], 'www.tumblr.com': [1, 0], 'slickdeals.net': [0, 1]}
 
@@ -28,17 +44,15 @@ import eventlet
 
 # print(len(text))
 
-# for file_ in os.listdir("../resources//partialSnopes"):    
-#     print(file_)
+for file_ in os.listdir("../resources//partialSnopes"):    
+    print(file_)
 
-test = []
-test.append([1,11,3])
-test.append([4,2,3])
-test.append([2,2,9])
-test.append([3,6,3])
+# test = []
+# test.append([1,11,3])
+# test.append([4,2,3])
+# test.append([2,2,9])
+# test.append([3,6,3])
 
-test.sort(key= lambda instance: max(instance[1], instance[2]),reverse=True)
+# test.sort(key= lambda instance: max(instance[1], instance[2]),reverse=True)
 
-print(test)
-
-
+# print(test)
