@@ -10,7 +10,7 @@ def pullArticleText(webAddress, timeoutTime = 4):
         Return: list of text representing each section of webpage
 
         param: webAddress: the url to be accessed
-        param: timeoutTime: seconds before giving up on request, default 3
+        param: timeoutTime: seconds before giving up on request, default 4
     """
     articleText = []
     try:
