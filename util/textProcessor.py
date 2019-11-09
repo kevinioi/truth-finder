@@ -19,10 +19,19 @@ def pullArticleText(webAddress, timeoutTime = 4):
         raise e
 
     soup = BeautifulSoup(webSource, 'lxml')
+    
+    #remove scripts, it sometimes errors if there are none
+    try:
+        for script in soup("script"):
+            script.decompose()
+    except:
+        print("error")
+        pass
+
     for section in soup.find_all():
         try:
             # articleText.append(section.text)
-            articleText.append("".join(line.strip() for line in section.text.split("\n")))
+            articleText.append("".join(line.strip() for line in section.get_text().split("\n")))
         except Exception as e:
             raise e
     return articleText
@@ -39,18 +48,18 @@ def calcOverlap(claim, chunk):
     claimStems = [ps.stem(word.lower()) for word in word_tokenize(claim) if word.isalpha()]
     chunkStems = [ps.stem(word.lower()) for word in word_tokenize(chunk) if word.isalpha()]
 
-    claimGramsStemmed = []
-    snipGramsStemmed = []
+    claimGramsStemmed = set()
+    snipGramsStemmed = set()
 
     #add all grams to lists
     for gram in ngrams(claimStems,n=1):
-        claimGramsStemmed.append(gram)
+        claimGramsStemmed.add(gram)
     for gram in ngrams(claimStems,n=2):
-        claimGramsStemmed.append(gram)
+        claimGramsStemmed.add(gram)
     for gram in ngrams(chunkStems,n=1):
-        snipGramsStemmed.append(gram)
+        snipGramsStemmed.add(gram)
     for gram in ngrams(chunkStems,n=2):
-        snipGramsStemmed.append(gram)
+        snipGramsStemmed.add(gram)
 
     gramOverlap = 0
     for gram in claimGramsStemmed:
@@ -58,7 +67,8 @@ def calcOverlap(claim, chunk):
             gramOverlap += 1.0
 
     try:
-        overlap = gramOverlap / len(claimGramsStemmed)
+        if ((gramOverlap / len(snipGramsStemmed)) > 0.05):
+            overlap = gramOverlap / len(claimGramsStemmed)
     except:
         overlap = 0.0
         pass
@@ -113,7 +123,7 @@ def getRelevence(claim, snippets):
 
     for snip in snippets:
         overlap = calcOverlap(claim, snip)
-        if overlap >= 0.4:
+        if overlap >= 0.3:
             releventSnips[0].append(snip)
             releventSnips[1].append(overlap)
     return releventSnips

@@ -47,7 +47,7 @@ for file_ in os.listdir("../resources//partialSnopes"):
                     if (source["domain"] != "www.snopes.com"):
                         print(source["domain"])
                         try:
-                            text = textProcessor.pullArticleText(source["link"])
+                            text = textProcessor.pullArticleText(source["link"],timeoutTime=6)
                             snippets = textProcessor.getSnippets(text, 4)
                             releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
                             numRelevent = len(releventSnips[0])
@@ -77,8 +77,8 @@ for file_ in os.listdir("../resources//partialSnopes"):
                                 for index, probVals in enumerate(stanceImpact[:10]):
                                     probSum[0] += probVals[0]
                                     probSum[1] += probVals[1]
-                                probSum[0] /= index
-                                probSum[1] /= index
+                                probSum[0] /= index + 1
+                                probSum[1] /= index + 1
 
                                 if (probSum[truthValue] > probSum[abs(truthValue-1)]):
                                     (reliability[source["domain"]])[0] += 1#correct
@@ -88,12 +88,12 @@ for file_ in os.listdir("../resources//partialSnopes"):
                             # raise e
                             continue
                     # break#each entry in page
-                break#each page?
-            break #each page.
-        break#each file
-    break#each file?
+                # break#each page?
+            # break #each page.
+        # break#each file
+    # break#each file?
 
-with open("reliability5.txt", "w") as fp:
+with open("reliability6.txt", "w") as fp:
     for r in reliability:
         articleStances = reliability[r]
         percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])

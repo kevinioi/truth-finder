@@ -1,0 +1,4 @@
+www.mlive.com	1.0	[1, 0]
+www.wilx.com	1.0	[1, 0]
+www.freep.com	1.0	[1, 0]
+www.cheapassgamer.com	1.0	[1, 0]
