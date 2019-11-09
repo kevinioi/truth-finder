@@ -5,7 +5,7 @@ from collections import defaultdict
 from nltk.stem import PorterStemmer
 
 
-def pullArticleText(webAddress, timeoutTime = 3):
+def pullArticleText(webAddress, timeoutTime = 4):
     """
         Return: list of text representing each section of webpage
 
@@ -19,11 +19,10 @@ def pullArticleText(webAddress, timeoutTime = 3):
         raise e
 
     soup = BeautifulSoup(webSource, 'lxml')
-    for section in soup.find_all('div'):
+    for section in soup.find_all():
         try:
             # articleText.append(section.text)
             articleText.append("".join(line.strip() for line in section.text.split("\n")))
-
         except Exception as e:
             raise e
     return articleText
@@ -114,7 +113,7 @@ def getRelevence(claim, snippets):
 
     for snip in snippets:
         overlap = calcOverlap(claim, snip)
-        if overlap >= 0.3:
+        if overlap >= 0.4:
             releventSnips[0].append(snip)
             releventSnips[1].append(overlap)
     return releventSnips

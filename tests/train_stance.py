@@ -57,12 +57,12 @@ featDict = featureBag.getFeatureFile("../resources/featsV2.pickle")
 with open('../resources/dataSetV2.pickle', 'rb') as handle:
     dataSet = pickle.load(handle)
 
-# model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 2.8')
+model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 10')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 1')
-model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 2.7 -v 10')
+# model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 10 -v 10')
 
 
 
 # p_labels, p_acc, p_vals = llu.predict( [], [(dataSet[1])[0]],model, '-b 1')
 
-# llu.save_model("../resources//models/gen2v1.model",model)
+llu.save_model("../resources//models/gen2v2.model",model)

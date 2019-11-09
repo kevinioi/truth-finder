@@ -11,42 +11,47 @@ from liblinearpkg import *
 from liblinearpkg import liblinearutil as llu
 from util import featureBag
 from collections import defaultdict
+import pickle
+
+with open("../resources//linguisticLexicon/negative-words.txt", "r") as file_:
+    content = file_.readlines()
+
+dd = defaultdict(lambda : 0)
+
+count=0
+
+for i,line in enumerate(content):
+    # words = line.split(" ",5)
+    if dd[line.strip()] == 0:
+        count+=1
+        dd[line.strip()] = count
+
+print(dd)
+
+with open('lingFeats3.pickle', 'wb') as handle:
+    pickle.dump(dict(dd), handle, protocol=pickle.HIGHEST_PROTOCOL)
+   
 
 
-# myDict = featureBag.getFeatureFile("../resources/feats.pickle")
-
-# print(myDict[('spoof',)])
-
-# for i in myDict.keys():
-#     if myDict[i] == 317:
-#         print(i)
 
 
-# for i, x in enumerate(myDict):
-#     print(f'{x}: {myDict[x]}')
-#     if i > 30:
-#         break
-# print(myDict[("review",)])
+# """
+#     count refute and support
+# """
 
-# featureBag.createFeatureFile('../../data/', '../resources/feats.pickle')
+# true = 0
+# false = 0
 
-"""
-    count refute and support
-"""
+# for file_ in os.listdir("../resources//snopesData"):
+#     if file_.endswith(".json"):
+#         with open("../resources//snopesData/" + file_, 'r') as doc:
+#             fileData =  json.loads(doc.read())
 
-true = 0
-false = 0
+#         if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
+#             false +=1
+#         elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
+#             true += 1
 
-for file_ in os.listdir("../resources//snopesData"):
-    if file_.endswith(".json"):
-        with open("../resources//snopesData/" + file_, 'r') as doc:
-            fileData =  json.loads(doc.read())
-
-        if fileData['Credibility'] == 'false' or fileData['Credibility'] == 'mostly false':
-            false +=1
-        elif fileData['Credibility'] == 'true' or fileData['Credibility'] == 'mostly true':
-            true += 1
-
-print(true)
-print(false)
-print(false/true)
+# print(true)
+# print(false)
+# print(false/true)

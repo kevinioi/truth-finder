@@ -63,7 +63,7 @@ with open('../resources/dataSetV2.pickle', 'rb') as handle:
     dataSet = pickle.load(handle)
 
 print("****** Unweighted *******")
-p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1],model1, '-b 1')
+p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1],model1, '-b 1 -p')
 
 print(f"p_labels: {p_labels}  p_acc: {p_acc}   p_vals:  {p_vals}")
 

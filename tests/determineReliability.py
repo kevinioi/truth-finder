@@ -52,6 +52,7 @@ for file_ in os.listdir("../resources//partialSnopes"):
                             releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
                             numRelevent = len(releventSnips[0])
                             
+
                             if numRelevent > 0:
                                 snipData = textProcessor.prepListForClassification(releventSnips[0],featDict)
                                 p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
@@ -79,20 +80,20 @@ for file_ in os.listdir("../resources//partialSnopes"):
                                 probSum[0] /= index
                                 probSum[1] /= index
 
-                                if (probSum[truthValue] > probSum[1]):
+                                if (probSum[truthValue] > probSum[abs(truthValue-1)]):
                                     (reliability[source["domain"]])[0] += 1#correct
                                 else:
                                     (reliability[source["domain"]])[1] += 1#incorrect
                         except Exception as e:
-                            continue
                             # raise e
+                            continue
                     # break#each entry in page
-                # break#each page?
-            # break #each page.
-        # break#each file
-    # break#each file?
+                break#each page?
+            break #each page.
+        break#each file
+    break#each file?
 
-with open("reliability4.txt", "w") as fp:
+with open("reliability5.txt", "w") as fp:
     for r in reliability:
         articleStances = reliability[r]
         percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])
