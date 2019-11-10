@@ -93,7 +93,7 @@ for file_ in os.listdir("../resources//partialSnopes"):
         # break#each file
     # break#each file?
 
-with open("reliability6.txt", "w") as fp:
+with open("reliability2.txt", "w") as fp:
     for r in reliability:
         articleStances = reliability[r]
         percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])

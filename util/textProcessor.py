@@ -31,7 +31,9 @@ def pullArticleText(webAddress, timeoutTime = 4):
     for section in soup.find_all():
         try:
             # articleText.append(section.text)
-            articleText.append("".join(line.strip() for line in section.get_text().split("\n")))
+            sectionText = "".join(line.strip() for line in section.get_text().split("\n"))
+            if len(sectionText) < 400:
+                articleText.append(sectionText)
         except Exception as e:
             raise e
     return articleText
