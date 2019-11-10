@@ -1,0 +1,65 @@
+media_notnews_texascops.json
+media_notnews_texasebola.json
+media_notnews_texaspot.json
+media_notnews_texasquarantine.json
+media_notnews_timberland.json
+photos_animals_giantcatfish.json
+photos_animals_giantgeorge.json
+photos_animals_giantrabbit.json
+photos_animals_gianttoad.json
+photos_animals_giraffetree.json
+photos_animals_goldenzebra.json
+
+en.wikipedia.org	0.6	[3, 2]
+bikersofamerica.blogspot.com	1.0	[1, 0]
+www.citylab.com	1.0	[1, 0]
+www.flexyourrights.org	1.0	[1, 0]
+www.nairaland.com	0.0	[0, 2]
+www.oaupeeps.com	0.0	[0, 1]
+www.ibtimes.co.in	0.5	[1, 1]
+www.yellowbullet.com	1.0	[2, 0]
+www.haaretz.com	0.0	[0, 1]
+afludiary.blogspot.com	1.0	[1, 0]
+www.medscape.com	0.0	[0, 1]
+abc13.com	1.0	[1, 0]
+dfw.cbslocal.com	1.0	[1, 0]
+www.quora.com	0.0	[0, 1]
+www.chron.com	1.0	[1, 0]
+www.theweedblog.com	1.0	[1, 0]
+www.mintpressnews.com	0.0	[0, 1]
+www.usatoday.com	1.0	[1, 0]
+www.ksl.com	1.0	[1, 0]
+www.abovetopsecret.com	0.0	[0, 1]
+www.koco.com	0.0	[0, 1]
+ktemnews.com	1.0	[1, 0]
+www.corsicanadailysun.com	0.0	[0, 1]
+lockerdome.com	0.0	[0, 1]
+www.irumormill.com	0.0	[0, 1]
+paulding.com	0.0	[0, 1]
+www.theverge.com	1.0	[1, 0]
+twitter.com	0.0	[0, 1]
+cryptomundo.com	1.0	[1, 0]
+artoftheprank.com	0.0	[0, 1]
+www.youtube.com	0.0	[0, 1]
+www.dailymail.co.uk	0.0	[0, 3]
+motleynews.net	1.0	[1, 0]
+www.christianpost.com	1.0	[1, 0]
+www.pinterest.com	0.6666666666666666	[2, 1]
+justonemorepet.wordpress.com	0.0	[0, 1]
+www.pets4homes.co.uk	1.0	[1, 0]
+indulgy.com	1.0	[1, 0]
+springlady.wordpress.com	1.0	[1, 0]
+mentalfloss.com	1.0	[1, 0]
+www.justrabbits.com	1.0	[1, 0]
+www.raising-rabbits.com	1.0	[1, 0]
+rabbitbreeders.us	1.0	[1, 0]
+www.hoaxorfact.com	1.0	[1, 0]
+wafflesatnoon.com	1.0	[2, 0]
+zosotruthtalk.wordpress.com	0.0	[0, 1]
+firstresponsewildlife.typepad.com	0.0	[0, 1]
+www.petstation.com	0.0	[0, 1]
+jbugskitchenantics.typepad.com	0.0	[0, 1]
+www.masai-mara.com	0.0	[0, 1]
+www.hoax-slayer.com	1.0	[1, 0]
+hubpages.com	0.0	[0, 1]
+www.buzzfeed.com	1.0	[1, 0]

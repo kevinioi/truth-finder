@@ -1,3 +1,17 @@
+ben-carson-jesus-painting.json
+ben-carson-slavery.json
+bernie-sanders-essay.json
+bernie-sanders-parents-holocaust.json
+business_redeem_pulltabs.json
+business_redeem_subway.json
+business_redeem_tootsie.json
+business_revenge_lowes.json
+business_secret_babyshampoo.json
+Politics_satire_americascouts.json
+politics_satire_applebees.json
+Politics_satire_b2sale.json
+
+
 nypost.com	1.0	[2, 0]
 mic.com	0.0	[0, 1]
 news.yahoo.com	0.0	[0, 1]
