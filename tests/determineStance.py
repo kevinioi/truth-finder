@@ -28,7 +28,7 @@ probSum = [0,0]
 for r in relevent:
     print("***************")
     print(r)
-    p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepTextForClassification(r,featDict)],model1, '-b 1')
+    p_labels, p_acc, p_vals = llu.predict( [], [textProcessor.prepListForClassification(r,featDict)],model1, '-b 1')
     print(f"{p_labels}   {p_acc}    {p_vals}")
     probSum[0] += (p_vals[0])[0]
     probSum[1] += (p_vals[0])[1]

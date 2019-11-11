@@ -159,27 +159,29 @@ def prepListForClassification(text, featDict):
         dataList.append(dict(features))
     return dataList
 
-def prepTextForClassification(text, featDict):
+def prepArticleForClassification(textBlocks, featDict):
     """
-        Returns bigrams and unigram from text. Usable to define problem for linlinear predictor
+        returns dictionary containing all feature uni/bigrams in text of article
 
-        param: text: string to be processed 
-        param: features: dictionary of possible features for the model
+        param: textBlocks: list of text blocks in web sourced article\t
+        param: featDict: dictionary listing relevent features and their indices in the model 
     """
-    wordBag = word_tokenize(text)
-    wordBag = [word.lower() for word in wordBag if word.isalpha()]
+    articleFeatures = defaultdict(lambda:0)
 
-    #get uni/bigrams
-    unigrams = ngrams(wordBag,n=1)
-    bigrams = ngrams(wordBag,n=2)
-    
-    #add data to training/testing Sample
-    features = defaultdict(lambda:0)
-    for gram in unigrams:
-        if featDict[gram] != 0:#don't count gram that aren't known features
-            features[featDict[gram]] += 1
-    for gram in bigrams:
-        if featDict[gram] != 0:#don't count gram that aren't known features
-            features[featDict[gram]] += 1
+    for block in textBlocks:
+        wordBag = word_tokenize(block)
+        wordBag = [word.lower() for word in wordBag if word.isalpha()]
 
-    return dict(features)
+        #get uni/bigrams
+        unigrams = ngrams(wordBag,n=1)
+        bigrams = ngrams(wordBag,n=2)
+        
+        #add data to training/testing Sample
+        for gram in unigrams:
+            if featDict[gram] != 0:#don't count gram that aren't known features
+                articleFeatures[featDict[gram]] += 1
+        for gram in bigrams:
+            if featDict[gram] != 0:#don't count gram that aren't known features
+                articleFeatures[featDict[gram]] += 1
+
+    return dict(articleFeatures)
