@@ -1,0 +1,97 @@
+photos_odd_gnome.json
+photos_odd_haitiufos.json
+photos_odd_lucy.json
+photos_odd_mermaid.json
+photos_odd_ronald.json
+photos_odd_searsgrill.json
+photos_odd_smackmouth.json
+photos_odd_watermelon.json
+photos_patriotic_azflag.json
+photos_patriotic_cornmaze.json
+photos_patriotic_floralflag.json
+photos_patriotic_freedomrock.json
+photos_patriotic_liberty.json
+photos_patriotic_offutt.json
+photos_people_1920lecture.json
+photos_people_aniston.json
+photos_people_beauty.json
+photos_people_cinderella.json
+photos_people_dobrev.json
+photos_people_einsteinguitar.json
+photos_people_gottalent.json
+photos_people_griffin.json
+photos_people_groupselfie.json
+photos_people_heritage.json
+photos_people_jackson.json
+photos_people_jackson40.json
+photos_people_jfk-marilyn.json
+photos_people_katie.json
+photos_people_kevincarter.json
+photos_people_kisscam.json
+
+www.belfasttelegraph.co.uk	0.0	[0, 1]
+demontales.com	1.0	[1, 0]
+www.flickr.com	0.5	[1, 1]
+archive.org	0.0	[0, 1]
+www.thinkartificial.org	0.0	[0, 1]
+www.neatorama.com	0.5	[1, 1]
+www.educatinghumanity.com	0.0	[0, 1]
+metro.co.uk	1.0	[1, 0]
+github.com	0.5	[1, 1]
+newsblunt.blogspot.com	1.0	[1, 0]
+newsrescue.com	0.0	[0, 1]
+www.livescience.com	1.0	[1, 0]
+www.cosmopolitan.com	1.0	[1, 0]
+news.nationalgeographic.com	0.0	[0, 1]
+www.catersnews.com	0.0	[0, 1]
+www.dailymail.co.uk	0.4	[2, 3]
+www.hoax-slayer.com	0.0	[0, 2]
+www.amnh.org	1.0	[1, 0]
+pinktentacle.com	1.0	[1, 0]
+www.wikihow.com	0.0	[0, 2]
+twitter.com	0.0	[0, 1]
+www.foxnews.com	1.0	[1, 0]
+www.oneindia.com	1.0	[1, 0]
+ohioriders.net	1.0	[1, 0]
+community.babycenter.com	1.0	[1, 0]
+semensperms.com	1.0	[1, 0]
+collegefootballtalk.nbcsports.com	1.0	[1, 0]
+wtop.com	1.0	[1, 0]
+www.imdb.com	1.0	[1, 0]
+westsidetoastmasters.com	1.0	[1, 0]
+mediamatters.org	0.0	[0, 1]
+www.buzzfeed.com	0.0	[0, 1]
+www.wired.com	1.0	[1, 0]
+madamenoire.com	1.0	[1, 0]
+straightfromthea.com	1.0	[1, 0]
+www.amazon.com	1.0	[1, 0]
+www.cbsnews.com	1.0	[1, 0]
+www.boredpanda.com	1.0	[1, 0]
+www.telegraph.co.uk	1.0	[1, 0]
+www.npr.org	0.0	[0, 1]
+commons.wikimedia.org	1.0	[1, 0]
+puzzling.stackexchange.com	0.0	[0, 1]
+www.globaltimes.cn	1.0	[1, 0]
+www.dvorak.org	1.0	[1, 0]
+12160.info	0.0	[0, 1]
+www.loeser.us	0.0	[0, 1]
+www.hq.nasa.gov	1.0	[1, 0]
+www.eonline.com	1.0	[1, 0]
+gizmodo.com	0.0	[0, 1]
+www.cals.ncsu.edu	0.0	[0, 1]
+dfw.cbslocal.com	0.0	[0, 1]
+www.sportressofblogitude.com	0.0	[0, 1]
+avax.news	1.0	[1, 0]
+www.facebook.com	0.0	[0, 1]
+camelopardid2.rssing.com	0.0	[0, 1]
+mobang1.blogspot.com	0.0	[0, 1]
+snapzu.com	0.0	[0, 1]
+en.wikipedia.org	1.0	[1, 0]
+www.lovethesepics.com	0.0	[0, 1]
+www.nyc-architecture.com	1.0	[1, 0]
+stevenjohnhibbs.wordpress.com	0.0	[0, 1]
+factually.gizmodo.com	0.0	[0, 1]
+www.boston.com	1.0	[1, 0]
+www.brownielocks.com	1.0	[1, 0]
+hoaxes.org	0.0	[0, 1]
+www.theatlantic.com	1.0	[1, 0]
