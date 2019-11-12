@@ -13,9 +13,41 @@ from util import featureBag
 from collections import defaultdict
 import pickle
 
+"""
+check added feats
+"""
+
+with open('../resources//featsFull.pickle', 'rb') as handle:
+    fullFeats = pickle.load(handle)
+
+for feat in fullFeats:
+    if fullFeats[feat]>604072:
+        print(feat)
+        print(fullFeats[feat])
 
 """
-combine dicts
+combine all feature dicts
+"""
+
+# with open('../resources//lingFeatsComplete.pickle', 'rb') as handle:
+#     lingfeats = pickle.load(handle)
+# with open('../resources//featsV2.pickle', 'rb') as handle:
+#     stancefeats = pickle.load(handle)
+
+
+# count = 604073
+
+# for feat in lingfeats:
+#     if stancefeats[(feat,)] == 0:
+#         count += 1
+#         stancefeats[(feat,)] = count
+
+# with open('../resources//featsFull.pickle', 'wb') as handle:
+#     pickle.dump(stancefeats, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+"""
+combine ling feat dicts 
 """
 # count = 0
 # fullDict = defaultdict(lambda : 0)
@@ -89,15 +121,15 @@ feat4 -> Affective
 check dicts
 """
 
-with open('lingFeatsComplete.pickle', 'rb') as handle:
-    dataSet = pickle.load(handle)
+# with open('lingFeatsComplete.pickle', 'rb') as handle:
+#     dataSet = pickle.load(handle)
 
-print(len(dataSet))
+# print(len(dataSet))
 
-for x in dataSet:
-    print(x)
-    print(dataSet[x])
-    break
+# for x in dataSet:
+#     print(x)
+#     print(dataSet[x])
+#     break
 
 
 """
