@@ -18,9 +18,15 @@ import pickle
 featureDict = featureBag.getFeatureFile("../resources//featsFull.pickle")
 # reliabilityDict = featureBag.getFeatureFile("../resources/reliability.pickle")
 
-
+count = 0
 #load data from all source files
 for file_ in os.listdir("../resources//contentTrain"):
+    count+=1
+    print("************************************")
+    print(file_)
+    print(count)
+    print("************************************")
+
     if file_.endswith(".json"):
         with open("../resources//contentTrain/" + file_, 'r') as doc:#read snopes file
             fileData =  json.loads(doc.read())
