@@ -32,10 +32,12 @@ def pullArticleText(webAddress, timeoutTime = 4):
         try:
             # articleText.append(section.text)
             sectionText = "".join(line.strip() for line in section.get_text().split("\n"))
-            if len(sectionText) < 400:
+
+            if(len(sectionText)<100000):
                 articleText.append(sectionText)
         except Exception as e:
             raise e
+
     return articleText
 
 def calcOverlap(claim, chunk):
