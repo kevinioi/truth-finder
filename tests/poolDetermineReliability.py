@@ -11,7 +11,9 @@ from util import textProcessor
 from collections import defaultdict
 from multiprocessing import Pool
 
-def determineRel(features, model, dirAdr):
+def determineRel(dirAdr):
+    features = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
+    model = llu.load_model("../resources/models/stance2v2.model")
 
     #load data from all source files
     for file_ in os.listdir(dirAdr):    
@@ -32,10 +34,8 @@ def determineRel(features, model, dirAdr):
                 for resultsDict in page.values():#load sources from google page
                     for source in resultsDict:#process each source
                         if (source["domain"] != "www.snopes.com"):
-                            print(source["domain"])
-                            print(source["link"])
                             try:
-                                text = textProcessor.pullArticleText(source["link"],timeoutTime=6)
+                                text = textProcessor.pullArticleText(source["link"],timeoutTime=10)
                                 snippets = textProcessor.getSnippets(text, 4)
                                 releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
                                 numRelevent = len(releventSnips[0])                  
@@ -67,15 +67,12 @@ def determineRel(features, model, dirAdr):
                                 # raise e
                                 continue
 
-        with open(dirAdr + "//output/" + file_, "w") as fp:
-            for r in reliability:
-                articleStances = reliability[r]
-                percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])
-                fp.write(r + "\t" + str(percentCorrect) + "\t" + str(articleStances) + "\n")    
-
-
-
-    return None
+            with open(dirAdr + "//out/" + file_, "w") as fp:
+                for r in reliability:
+                    articleStances = reliability[r]
+                    percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])
+                    fp.write(r + "\t" + str(percentCorrect) + "\t" + str(articleStances) + "\n")
+    return
 
     
 #dict to store results of correct/incorrect stance classifications during training
@@ -84,21 +81,13 @@ def determineRel(features, model, dirAdr):
 
 
 if __name__ == "__main__":
-
-    featDict = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
-    model = llu.load_model("../resources/models/stance2v2.model")
-
     with Pool(processes=4) as pool:
         procs = []
-        procs.append(pool.apply_async(determineRel,(featDict, model, "../resources//reliability//one",)))
-        procs.append(pool.apply_async(determineRel,(featDict, model, "../resources//reliability//two",)))
-        procs.append(pool.apply_async(determineRel,(featDict, model, "../resources//reliability//three",)))
-        procs.append(pool.apply_async(determineRel,(featDict, model, "../resources//reliability//four",)))
+        procs.append(pool.apply_async(determineRel,("../resources//reliability//one",)))
+        procs.append(pool.apply_async(determineRel,("../resources//reliability//two",)))
+        procs.append(pool.apply_async(determineRel,("../resources//reliability//three",)))
+        procs.append(pool.apply_async(determineRel,("../resources//reliability//four",)))
 
         #wait for each process to finish
         for proc in procs:
             proc.wait()
-
-    pass
-
-
