@@ -10,10 +10,10 @@ from util import featureBag
 import pickle
 
 #dictionary containing all possible features 
-featureDict = featureBag.getFeatureFile("../resources//featsFull.pickle")
+# featureDict = featureBag.getFeatureFile("../resources//featsFull.pickle")
 # reliabilityDict = featureBag.getFeatureFile("../resources/reliability.pickle")
 
-dataSet = [[],[]]
+# dataSet = [[],[]]
 
 # #load data from all source files
 # for file_ in os.listdir("../resources//contentTrain//output"):
@@ -29,13 +29,18 @@ dataSet = [[],[]]
 
 #         dataSet[0].extend(fileData[0])
 #         dataSet[1].extend(listofProperDicts)    
-
     
-# with open('contentAwareData.pickle', 'wb') as handle:
+# with open('distantSupervisionDataV2.pickle', 'wb') as handle:
 #     pickle.dump(dataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
-with open('distantSupervisionData.pickle', 'rb') as handle:
+
+with open('../resources//distantSupervisionDataV2.pickle', 'rb') as handle:
     dataSet = pickle.load(handle)
 
-model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 2.7 -v 10')
-# llu.save_model("../resources//models/contentAware.model",model)
+model = llu.load_model("../resources//models/contentAwareV3.model")
+llu.predict(dataSet[0][40000:], dataSet[1][40000:], model, '-b 1')
+
+
+# model = llu.train(dataSet[0][:40000], dataSet[1][:40000], '-s 6 -w1 2.7') # -v 10
+# llu.save_model("../resources//models/contentAwareV3.model",model)
+
 

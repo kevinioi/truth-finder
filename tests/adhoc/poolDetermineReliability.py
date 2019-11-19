@@ -67,7 +67,7 @@ def determineRel(dirAdr):
                                 # raise e
                                 continue
 
-            with open(dirAdr + "//out/" + file_, "w") as fp:
+            with open("../resources//reliability//out/" + file_, "w") as fp:
                 for r in reliability:
                     articleStances = reliability[r]
                     percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])
