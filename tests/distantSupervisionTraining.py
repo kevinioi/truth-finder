@@ -23,7 +23,7 @@ def testModel():
     # default dict, default -1
     with open("compiledReliabilityDict502.txt", "r") as relFile:
         relDict = json.load(relFile)
-    relDict = defaultdict(lambda: -1, relDict)
+    relDict = defaultdict(lambda: -1    , relDict)
 
     judgements = []
     current_claim = ""
