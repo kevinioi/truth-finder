@@ -10,71 +10,35 @@ from util import featureBag
 import pickle
 from collections import defaultdict
 from multiprocessing import Pool
+from util import textProcessor
 
 def getLingFeats(dirAdr):
-"""
- give it ../resources//dataFiles//lingFeatures//one, two, three...
+    """
+    give it ../resources//dataFiles//lingFeatures//one, two, three...
 
- it will grab all relevent articles from the contentTrain//output dir
-    - get the url and pull the lingfeats from the article 
-"""
-
-
+    it will grab all relevent articles from the contentTrain//output dir
+        - get the url and pull the lingfeats from the article 
+    """
     with open('correctedLingfeats.pickle', 'rb') as handle:
         lingFeatureDict =  pickle.load(handle)
-    lingFeatureDict = defaultdict(lambda: 0, linguisticFeatures)
+    lingFeatureDict = defaultdict(lambda: 0, lingFeatureDict)
 
     for file_ in os.listdir(dirAdr):
         if file_.endswith(".json"):
             claimLingFeats = {}
 
-            with open("../resources//contentTrain//output/" + file_, 'r') as doc:
+            with open("../resources//contentTrain//out/" + file_, 'r') as doc:
                 claimData =  json.loads(doc.read())
             for article in claimData[1]:
-                url = article[1][1]
-                articleText = textProcessor.pullArticleText(url ,timeoutTime=6)
-                releventFeatures = prepArticleForClassification(articleText, lingFeatDict)
-                claimLingFeats[url] = releventFeatures
-
-            with open("../resources//dataFiles//lingFeatures//out/"+ file_) as outputFile:
+                try:
+                    url = article[2]
+                    articleText = textProcessor.pullArticleText(url ,timeoutTime=30)
+                    releventFeatures = textProcessor.prepArticleForClassification(articleText, lingFeatureDict)
+                    claimLingFeats[url] = releventFeatures
+                except:
+                    continue
+            with open("../resources//dataFiles//lingFeatures//localOutput/"+ file_, "w") as outputFile:
                 json.dump( claimLingFeats, outputFile)
-
-
-def makeDistantSupervisionData():
-
-    # [[truthvalues], [{features}], [domain], [file_name]]
-    fullDataSet = [[], [], [], []]
-    
-    for file_ in os.listdir("../resources//contentTrain//output"):
-        if file_.endswith(".json"):
-            with open("../resources//contentTrain//output/" + file_, 'r') as doc:
-                claimData =  json.loads(doc.read())
-            
-            for article in claimData[1]:
-                articleFeats = {}
-                fullDataSet[0].append(claimData[0][0])#truth value
-                sumprobabilities = [0,0]
-
-                #avg probabilities of first 5 snippets in article
-                for i, snippet in enumerate(article[0][:5]):
-                    sumprobabilities[0] += snippet[0[0]]
-                    sumprobabilities[1] += snippet[0[1]]
-                sumprobabilities[0] /= i+1
-                sumprobabilities[1] /= i+1
-                
-                #get ling feats
-                with open("../resources//dataFiles//lingFeatures//out/"+file_ 'r') as lFile:
-                    lFileDict = json.load(lFile)
-
-                articleFeats[2] = sumprobabilities[0]#prob support
-                articleFeats[3] = sumprobabilities[1]#prob refute
-                articleFeats.update(lFileDict[article[2]])#Use url as key in lingfeats
-                fullDataSet[1].append(articleFeats)#features
-                fullDataSet[2].append(article[1]) #domain
-                fullDataSet[3].append(file_)
-    
-    with open('properDistantSupervisionData.pickle', 'wb') as handle:
-        pickle.dump(fullDataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def makeJointData():
@@ -103,13 +67,13 @@ def makeJointData():
 
                 #avg probabilities of first 5 snippets in article
                 for i, snippet in enumerate(article[0][:5]):
-                    sumprobabilities[0] += snippet[0[0]]
-                    sumprobabilities[1] += snippet[0[1]]
+                    sumprobabilities[0] += snippet[0][0]
+                    sumprobabilities[1] += snippet[0][1]
                 sumprobabilities[0] /= i+1
                 sumprobabilities[1] /= i+1
                 
                 #get linguistic features for article
-                with open("../resources//dataFiles//lingFeatures//out/"+file_ 'r') as lFile:
+                with open("../resources//dataFiles//lingFeatures//out/"+file_ ,'r') as lFile:
                     lFileDict = json.load(lFile)
 
                 articleFeats[2] = sumprobabilities[0]#prob support
@@ -146,17 +110,20 @@ def makeJointData():
                 
 
 if __name__ == "__main__":
+
+  getLingFeats("../resources//dataFiles//lingFeatures//test")
+
+    # with Pool(processes=6) as pool:
+    #     procs = []
+    #     procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//one",)))
+    #     procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//two",)))
+    #     procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//three",)))
+    #     procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//four",)))
+    #     procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//five",)))
+    #     procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//six",)))
+
+    #     #wait for each process to finish
+    #     for proc in procs:
+    #         proc.wait()
+
     
-    with Pool(processes=6) as pool:
-        procs = []
-        procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//one",)))
-        procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//two",)))
-        procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//three",)))
-        procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//four",)))
-        procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//five",)))
-        procs.append(pool.apply_async(getLingFeats,("../resources//dataFiles//lingFeatures//six",)))
-
-        #wait for each process to finish
-        for proc in procs:
-            proc.wait()
-

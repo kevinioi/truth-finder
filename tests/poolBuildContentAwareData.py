@@ -44,7 +44,7 @@ def buildData(dirAdr):
                     for source in resultsDict:#process each source
                         if (source["domain"] != "www.snopes.com"):
                             try:
-                                text = textProcessor.pullArticleText(source["link"],timeoutTime=10)
+                                text = textProcessor.pullArticleText(source["link"],timeoutTime=12)
                                 snippets = textProcessor.getSnippets(text, 4)
                                 releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
                                 numRelevent = len(releventSnips[0])                  

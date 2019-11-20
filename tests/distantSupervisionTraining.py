@@ -16,7 +16,7 @@ def testModel():
     with open('properDistantSupervisionData.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
     model = llu.load_model("../resources//models/contentAwareV3.model")
-    p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model, '-b 1 -p')
+    p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model, '-b 1')
 
     #
     # Load reliability!!!!!!!!!!!!!!!!!!!!!
@@ -36,7 +36,7 @@ def testModel():
             if sumCurrentProbs[0] > sumCurrentProbs[1]:
                 judgements.append((1, current_claim_truth))
             else:
-                judgements.append(0,current_claim_truth)
+                judgements.append((0,current_claim_truth))
             sumCurrentProbs = [0,0]
         
         current_claim_truth = dataSet[0][i]
@@ -52,7 +52,7 @@ def testModel():
     correct = 0
     wrong = 0
     gotFalsewrong = 0
-    gotTrueWrong = 0
+    gotTruewrong = 0
 
     for x in judgements:
         if x[0] == x[1]:
@@ -80,4 +80,4 @@ def training():
 
 
 if __name__ == "__main__":
-    pass
+    testModel()
