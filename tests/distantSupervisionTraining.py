@@ -15,7 +15,7 @@ def testModel():
     
     with open('properDistantSupervisionData.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
-    model = llu.load_model("../resources//models/contentAwareV3.model")
+    model = llu.load_model("../resources//models/distantSupervisionV1M1.model")
     p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model, '-b 1')
 
     #
@@ -31,9 +31,8 @@ def testModel():
     sumCurrentProbs = [0,0]
     for i, probs in enumerate(p_vals):
 
-        if (i>0) and (current_claim != dataSet[3][i]):#new claim
-            
-            if sumCurrentProbs[0] > sumCurrentProbs[1]:
+        if (i>0) and (current_claim != dataSet[3][i]):#not first claim in dataset AND new claim
+            if sumCurrentProbs[0] < sumCurrentProbs[1]:
                 judgements.append((1, current_claim_truth))
             else:
                 judgements.append((0,current_claim_truth))
@@ -76,8 +75,9 @@ def training():
         dataSet = pickle.load(handle)
 
     model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 2.7') # -v 10
-    llu.save_model("../resources//models/contentAwareV4.model",model)
+    llu.save_model("../resources//models/distantSupervisionV1M2.model",model)
 
 
 if __name__ == "__main__":
+    # training()
     testModel()

@@ -87,6 +87,8 @@ if __name__ == "__main__":
         procs.append(pool.apply_async(determineRel,("../resources//reliability//two",)))
         procs.append(pool.apply_async(determineRel,("../resources//reliability//three",)))
         procs.append(pool.apply_async(determineRel,("../resources//reliability//four",)))
+        procs.append(pool.apply_async(determineRel,("../resources//reliability//five",)))
+        procs.append(pool.apply_async(determineRel,("../resources//reliability//six",)))
 
         #wait for each process to finish
         for proc in procs:
