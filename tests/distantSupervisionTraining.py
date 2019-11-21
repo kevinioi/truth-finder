@@ -13,15 +13,20 @@ from collections import defaultdict
 
 def testModel():
     
-    with open('properDistantSupervisionData.pickle', 'rb') as handle:
+    #load dataset
+    with open('../resources//properDistantSupervisionDataV1.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
-    model = llu.load_model("../resources//models/distantSupervisionV1M1.model")
-    p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model, '-b 1')
 
-    #
-    # Load reliability!!!!!!!!!!!!!!!!!!!!!
+    #load trained model
+    model = llu.load_model("../resources//models/distantSupervisionSample.model")
+
+    #run predictions
+    p_labels, p_acc, p_vals = llu.predict(dataSet[0][:1881], dataSet[1][:1881], model, '-b 1')
+
+
+    # Load reliability
     # default dict, default -1
-    with open("compiledReliabilityDict502.txt", "r") as relFile:
+    with open("../resources//compiledReliabilityDict502.txt", "r") as relFile:
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1    , relDict)
 
@@ -43,8 +48,8 @@ def testModel():
         reliability = relDict[dataSet[2][i]]
         if reliability == -1:
             reliability = 0.5
-        elif reliability < 0.25:
-            reliability = 0.25
+        elif reliability < 0.1:
+            reliability = 0.1
         sumCurrentProbs[0] += probs[0]*reliability
         sumCurrentProbs[1] += probs[1]*reliability
 
@@ -71,11 +76,11 @@ def testModel():
 
 
 def training():
-    with open('properDistantSupervisionData.pickle', 'rb') as handle:
+    with open('../resources//properDistantSupervisionDataV2.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
 
-    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 2.7') # -v 10
-    llu.save_model("../resources//models/distantSupervisionV1M2.model",model)
+    model = llu.train(dataSet[0][1881:], dataSet[1][1881:], '-s 6 -w1 2.7') # -v 10
+    llu.save_model("../resources//models/distantSupervisionV2M1.model",model)
 
 
 if __name__ == "__main__":

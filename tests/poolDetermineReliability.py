@@ -11,7 +11,23 @@ from util import textProcessor
 from collections import defaultdict
 from multiprocessing import Pool
 
+
+
+"""
+    takes raw snopes files from ../resources//reliability//one, two, three
+    - Pulls reliability of individual articles for each claim
+
+    Stores the information under filename in ../resources//reliability//out/
+
+
+    ****RUN combineReliabilityScores after determineRel()
+"""
+
+
 def determineRel(dirAdr):
+    """
+        pull from web to determine source reliabilities
+    """
     features = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
     model = llu.load_model("../resources/models/stance2v2.model")
 
@@ -74,10 +90,52 @@ def determineRel(dirAdr):
                     fp.write(r + "\t" + str(percentCorrect) + "\t" + str(articleStances) + "\n")
     return
 
-    
-#dict to store results of correct/incorrect stance classifications during training
-# key will be web domains
-# initialize values to [0 correct, 0 incorrect] on new domain
+
+
+def combineReliabilityScores():
+    """
+        Compile reliability scores
+    """
+
+    reliability = defaultdict(lambda: [0,0])
+
+
+    for file_ in os.listdir("../resources//reliability//output"):
+        if file_.endswith('.json'):
+            with open("../resources//reliability//output/" + file_, 'r') as text:
+                # no = False
+                for line in text:
+                    # if no:
+                    try:
+                        words = line.split('\t')
+                        score = json.loads(words[2])
+                        (reliability[words[0]])[0] += score[0] 
+                        (reliability[words[0]])[1] += score[1] 
+                    except Exception as e:
+                        raise e
+                    # if '**' in line:
+                        # no = True
+
+    completeDict = {}
+
+    sortme = []
+    for x in reliability:
+        completeDict[x] = reliability[x][0]/(reliability[x][0]+reliability[x][1]) 
+        sortme.append((x, reliability[x][0]/(reliability[x][0]+reliability[x][1]), reliability[x][0], reliability[x][1]))
+
+    sortme.sort(key=lambda x:x[2]+x[3])
+    for m in sortme:
+        print(m)
+
+    # for domain in reliability.items():
+    #     if ((domain[1])[0] +(domain[1])[1]) >= 3:
+    #         myList.append(domain)
+
+    # myList.sort(key=lambda x: ((x[1])[0]*1.0)/((x[1])[0] +(x[1])[1]))
+
+
+    with open("compiledReliabilityDict707.txt", "w") as a:
+        a.write(json.dumps(completeDict))
 
 
 if __name__ == "__main__":

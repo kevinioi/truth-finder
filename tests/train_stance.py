@@ -59,7 +59,7 @@ with open('../resources/dataSetV2.pickle', 'rb') as handle:
 
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 2.7')
 # model = llu.train(dataSet[0], dataSet[1], '-s 0 -w1 1')
-model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 10 -v 10')
+model = llu.train(dataSet[0], dataSet[1], '-s 0 -c 4 -w1 2.7 -v 10')
 
 
 

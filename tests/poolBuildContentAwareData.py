@@ -12,6 +12,16 @@ from collections import defaultdict
 from multiprocessing import Pool
 import pickle
 
+
+"""
+    takes raw snopes files from ../resources//contentTrain//one, two, three
+    - Pulls linguistic features, puts them under filename in ../resources//dataFiles//lingFeatures//out/
+    - Pulls stance class, truth values, domain, url, stores it under filename in ../resources//contentTrain//out/
+"""
+
+
+
+
 def buildData(dirAdr):
     features = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
     model = llu.load_model("../resources/models/stance2v2.model")
@@ -80,6 +90,7 @@ def buildData(dirAdr):
                             except Exception as e:
                                 # raise e
                                 continue
+            
 
             with open("../resources//contentTrain//out/" + file_, "w") as fp:
                 json.dump(articleInfo, fp)
@@ -89,8 +100,6 @@ def buildData(dirAdr):
     return
 
 if __name__ == "__main__":
-    
-    
     
     with Pool(processes=6) as pool:
         procs = []

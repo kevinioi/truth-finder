@@ -13,6 +13,20 @@ from multiprocessing import Pool
 from util import textProcessor
 
 
+"""
+    Generates the final data needed for distant supervision training/testing
+
+    **BEFORE USING THIS**
+
+        RENAME SAVE FILE!!!!
+
+
+    ensure: 
+    - features/stances of articles is uptodaet --->    ../resources//contentTrain//out
+    - linguistic features are up to date --->     ../resources//dataFiles//lingFeatures//out/
+"""
+
+
 def makeDistantSupervisionData():
     # [[truthvalues], [{features}], [domain], [file_name]]
     fullDataSet = [[], [], [], []]
@@ -48,7 +62,7 @@ def makeDistantSupervisionData():
                 fullDataSet[2].append(article[1]) #domain
                 fullDataSet[3].append(file_)
     
-    with open('properDistantSupervisionData.pickle', 'wb') as handle:
+    with open('../resources//properDistantSupervisionDataV2.pickle', 'wb') as handle:
         pickle.dump(fullDataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
