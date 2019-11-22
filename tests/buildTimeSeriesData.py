@@ -39,6 +39,7 @@ def buildData(dirAdr):
 
     #load data from all files in directory
     for claim in timeSeriesLinks:
+        print(claim)
                         #dictionary of days and articles, truthValue
         fullData[claim] = [{},int(timeSeriesLinks[claim][1])]
 
