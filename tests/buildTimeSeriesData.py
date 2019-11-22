@@ -143,37 +143,25 @@ def parseFile(fileAdr):
     with open("timeSeriesLinks.txt", "w") as file_:
         json.dump(info, file_)
 
-# claimDict =    
-# {
-# claim1 =
-#     [
-#         {
-#             day1 = 
-#             {
-#                 [
-#                     [[features], reliability, domain]
-#                 ]
-#             }
-#         }
-#         ,
-#         truthValue
-#     ]
-# }
+    # claimDict =    
+    # {
+    # claim1 =
+    #     [
+    #         {
+    #             day1 = 
+    #             {
+    #                 [
+    #                     [[features], reliability, domain]
+    #                 ]
+    #             }
+    #         }
+    #         ,
+    #         truthValue
+    #     ]
+    # }
 
 
 if __name__ == "__main__":
     
     buildData("timeSeriesLinks.txt")
     # parseFile("TimeSeries.txt")
-
-    # with Pool(processes=6) as pool:
-    #     procs = []
-    #     procs.append(pool.apply_async(buildData,("../resources//contentTrain//one",)))
-    #     procs.append(pool.apply_async(buildData,("../resources//contentTrain//two",)))
-    #     procs.append(pool.apply_async(buildData,("../resources//contentTrain//three",)))
-    #     procs.append(pool.apply_async(buildData,("../resources//contentTrain//four",)))
-    #     procs.append(pool.apply_async(buildData,("../resources//contentTrain//five",)))
-    #     procs.append(pool.apply_async(buildData,("../resources//contentTrain//six",)))
-    #     #wait for each process to finish
-    #     for proc in procs:
-    #         proc.wait()

@@ -61,5 +61,83 @@ def sumStrenthOverTime():
     return
 
 
+def getRollingAvgStance(days):
+    supportCount = 0
+    refuteCount = 0
+    supportSum = 0
+    refuteSum = 0
+
+    rollingStanceAvg = {}
+
+    for i in range(1,21):
+        for opinion in days[i]:
+            if opinion[0] > opinion[1]:
+                refuteCount += 1
+                refuteSum += opinion[0]
+            else:
+                supportCount += 1
+                supportSum += opinion[1]
+
+            #put avg stance calc in try catch to avoid divide by zero
+            try:
+                supportStance = supportSum/supportCount
+            except:
+                supportStance = 0
+            try:
+                refuteStance = refuteSum/refuteCount
+            except:
+                refuteStance = 0
+
+            rollingStanceAvg[i] = (refuteStance,supportStance)
+        
+    return rollingStanceAvg
+
+
+def getSlopeToDay(currentDay, days):
+
+    rollingStanceAvg = getRollingAvgStance(days)
+
+    #           [refuteProb, supportProb] 
+    numeratorOne = [0,0]
+    numeratorTwo = [0,0]
+    denominatorOne = [0,0]
+    denominatorTwo = [0,0]
+
+    for t in range(1,currentDay+1):
+        numeratorOne[0] += rollingStanceAvg[t][0]*t
+        numeratorTwo[0] += rollingStanceAvg[t][0]
+        numeratorOne[1] += rollingStanceAvg[t][1]*t
+        numeratorTwo[1] += rollingStanceAvg[t][1]
+        denominatorOne[0] += t**2  
+        denominatorOne[1] += t**2
+        denominatorTwo[0] += t
+        denominatorTwo[1] += t
+
+    numeratorOne[0] *= t
+    numeratorOne[1] *= t
+    numeratorTwo[0] *= (currentDay*(currentDay+1)/2)
+    numeratorTwo[1] *= (currentDay*(currentDay+1)/2)
+    denominatorOne[0] *= t
+    denominatorOne[1] *= t
+    denominatorTwo[0] = denominatorTwo[0]**2
+    denominatorTwo[1] = denominatorTwo[1]**2
+
+    slopes = [0,0]
+    slopes[0] = (numeratorOne[0] - numeratorTwo[0])/(denominatorOne[0]-denominatorTwo[0])
+    slopes[1] = (numeratorOne[1] - numeratorTwo[1])/(denominatorOne[1]-denominatorTwo[1])
+        
+    
+
+    return None
+
+
+def trendBasedCredibility(currentDay, days):
+    rollingStanceAvg = getRollingAvgStance(days)
+
+    slopes = getSlopeToDay(currentDay, days)
+    cred = (1+slope[1])*rollingStanceAvg[currentDay][1] - (1+slope[0])*rollingStanceAvg[currentDay][0]
+
+    return cred
+
 if __name__ == "__main__":
     sumStrenthOverTime()
