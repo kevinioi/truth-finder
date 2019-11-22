@@ -13,6 +13,13 @@ from multiprocessing import Pool
 from util import textProcessor
 
 
+"""
+
+    Browsing through contentTrain out to check for the subset test categories
+
+"""
+
+
 def checkForSocials():
     """
         Using to check for social media portion of study

@@ -27,11 +27,11 @@ def buildData(dirAdr):
         linguisticFeatures =  pickle.load(handle)
     linguisticFeatures = defaultdict(lambda: 0, linguisticFeatures)
     
-    with open("../resources//compiledReliabilityDict702.txt", "r") as relFile:
+    with open("../resources//compiledReliabilityDict707.txt", "r") as relFile:
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1, relDict)
 
-    with open("timeSeriesLinks.txt", "r") as sourceFile:
+    with open("../resources//timeSeries//timeSeriesLinks.txt", "r") as sourceFile:
         timeSeriesLinks = json.load(sourceFile)
         
     #will hold all the info
@@ -40,8 +40,18 @@ def buildData(dirAdr):
     #load data from all files in directory
     for claim in timeSeriesLinks:
                         #dictionary of days and articles, truthValue
-        fullData[claim] = [{},timeSeriesLinks[claim][1]]
+        fullData[claim] = [{},int(timeSeriesLinks[claim][1])]
 
+        #I FORGOT TO STORE THE TEXTUAL CLAIM
+        #FIND IT IN THE SOURCE FILES USING CLAIM FILENAME
+
+        textualClaim = ""
+        for sourceClaim in os.listdir("../resources//contentTrain//used_claims"):
+            if sourceClaim == claim:
+                with open("../resources//contentTrain/used_claims/" + sourceClaim, 'r') as doc:#read snopes file
+                    sourceClaimText = json.loads(doc.read())
+                textualClaim = sourceClaimText["Claim"]
+                        
         for day in timeSeriesLinks[claim][0]:
             fullData[claim][0][day] = []
 
@@ -50,9 +60,9 @@ def buildData(dirAdr):
                 articleInfo = [{}, ""]
                 
                 try:
-                    text = textProcessor.pullArticleText(article[0],timeoutTime=12)
+                    text = textProcessor.pullArticleText(article[0],timeoutTime=20)
                     snippets = textProcessor.getSnippets(text, 4)
-                    releventSnips = textProcessor.getRelevence(fileData["Claim"],snippets)
+                    releventSnips = textProcessor.getRelevence(textualClaim,snippets)
                     numRelevent = len(releventSnips[0])                  
 
                     if numRelevent > 0:
@@ -84,8 +94,8 @@ def buildData(dirAdr):
                         #average top 5 stance positions
                         avgStanceProbs = [0,0]
                         for i, probs in enumerate(stanceImpact[:5]):
-                            avgStanceProbs[0] += probs[0]
-                            avgStanceProbs[1] += probs[1]
+                            avgStanceProbs[0] += probs[0][0]
+                            avgStanceProbs[1] += probs[0][1]
                         avgStanceProbs[0] /= i+1
                         avgStanceProbs[1] /= i+1
                         articleInfo[0][2] = avgStanceProbs[0]
@@ -97,21 +107,18 @@ def buildData(dirAdr):
                             reliability = 0.5
                         elif reliability < 0.15:#baseline reliability
                             reliability = 0.15
-                        articleInfo[0][1] += reliability
+                        articleInfo[0][1] = reliability
                         articleInfo[1] = (article[1], reliability)
 
                         #add article information to the days info
                         fullData[claim][0][day].append(articleInfo)
-                except: #Exception as e
+                except: # Exception as e
                     # raise e
                     continue
+            
+    with open("../resources//timeSeries//out/fullData.json", "w") as fp:
+        json.dump(fullData, fp)
 
-            # with open("../resources//contentTrain//out/" + file_, "w") as fp:
-            #     json.dump(articleInfo, fp)
-
-            # with open("../resources//dataFiles//lingFeatures//out/" + file_, "w") as fp:
-            #     json.dump(claimLingFeats, fp)
-    return
 
 
 def parseFile(fileAdr):
