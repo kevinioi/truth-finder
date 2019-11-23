@@ -20,8 +20,6 @@ import pickle
 """
 
 
-
-
 def buildData(dirAdr):
     features = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
     model = llu.load_model("../resources/models/stance2v2.model")
@@ -38,8 +36,9 @@ def buildData(dirAdr):
             articleInfo = [[], []]#hold article information for claim
             # [[truthLabels], [ [[snippets], [probabilities], "domain", "url"]] ]
 
-            claimLingFeats = {}
-            # holds all of the linguistic features present in the articles
+            claimLingFeats = {} # holds all of the linguistic features present in the articles
+
+            reliability = defaultdict(lambda : [0,0])# holds reliability scores of the domains with relevent articles
 
             with open(dirAdr + "/" + file_, 'r') as doc:
                 fileData =  json.loads(doc.read())
@@ -78,29 +77,51 @@ def buildData(dirAdr):
                                         probs[0][0] = (releventSnips[1])[index]*probVals[0]
                                         probs[0][1] = (releventSnips[1])[index]*probVals[1]
                                         stanceImpact.append(probs)
-                                    
+                                                                       
                                     #sort by max overlap*probStance
                                     stanceImpact.sort(key= lambda instance: max(instance[0][0], instance[0][1]),reverse=True)
 
                                     stanceImpact = stanceImpact[:7]#KEEPING 7 RELEVENT SNIPS USE 5******* 
 
+                                    probSum = [0,0]
+                                    for index, probVals in enumerate(stanceImpact[:6]):
+                                        probSum[0] += probVals[0][0]
+                                        probSum[1] += probVals[0][1]
+                                    probSum[0] /= index + 1
+                                    probSum[1] /= index + 1
+
+                                    if (probSum[truthValue] > probSum[abs(truthValue-1)]):
+                                        (reliability[source["domain"]])[0] += 1#correct
+                                    else:
+                                        (reliability[source["domain"]])[1] += 1#incorrect
+
                                     articleInfo[0].append(truthValue)
                                     articleInfo[1].append([stanceImpact, source["domain"], source["link"]])
 
-                            except Exception as e:
+                            except: #Exception as e
                                 # raise e
                                 continue
-            
 
+            #save file reliability scores
+            with open("../resources//reliability//out/" + file_, "w") as fp:
+                for r in reliability:
+                    articleStances = reliability[r]
+                    percentCorrect = articleStances[0]/(articleStances[0]+ articleStances[1])
+                    fp.write(r + "\t" + str(percentCorrect) + "\t" + str(articleStances) + "\n")
+
+            #save file features, probabilities and snippets
             with open("../resources//contentTrain//out/" + file_, "w") as fp:
                 json.dump(articleInfo, fp)
 
+            #save file linguistic features
             with open("../resources//dataFiles//lingFeatures//out/" + file_, "w") as fp:
                 json.dump(claimLingFeats, fp)
     return
 
 if __name__ == "__main__":
-    
+
+    # buildData("../resources//contentTrain//one")
+
     with Pool(processes=6) as pool:
         procs = []
         procs.append(pool.apply_async(buildData,("../resources//contentTrain//one",)))

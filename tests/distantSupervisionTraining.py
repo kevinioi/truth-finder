@@ -11,14 +11,10 @@ import pickle
 from collections import defaultdict 
 
 
-def testModel():
+def testModel(model, dataSet):
     
-    #load dataset
-    with open('../resources//properDistantSupervisionDataV1.pickle', 'rb') as handle:
-        dataSet = pickle.load(handle)
-
     #load trained model
-    model = llu.load_model("../resources//models/distantSupervisionSample.model")
+    # model = llu.load_model("../resources//models/distantSupervisionSample.model")
 
     #run predictions
     p_labels, p_acc, p_vals = llu.predict(dataSet[0][:1881], dataSet[1][:1881], model, '-b 1')
@@ -26,7 +22,7 @@ def testModel():
 
     # Load reliability
     # default dict, default -1
-    with open("../resources//compiledReliabilityDict502.txt", "r") as relFile:
+    with open("../resources//compiledReliabilityDict707.txt", "r") as relFile:
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1    , relDict)
 
@@ -75,14 +71,17 @@ def testModel():
 
 
 
-def training():
+def training(dataset):
+
+    model = llu.train(dataSet[0][1881:], dataSet[1][1881:], '-s 6 -w1 2.7') # -v 10
+    # llu.save_model("../resources//models/distantSupervisionV2M1.model",model)
+
+    return model
+
+if __name__ == "__main__":
+    
     with open('../resources//properDistantSupervisionDataV2.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
 
-    model = llu.train(dataSet[0][1881:], dataSet[1][1881:], '-s 6 -w1 2.7') # -v 10
-    llu.save_model("../resources//models/distantSupervisionV2M1.model",model)
-
-
-if __name__ == "__main__":
-    # training()
-    testModel()
+    model = training(dataSet)
+    testModel(model, dataSet)

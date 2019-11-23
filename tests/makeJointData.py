@@ -11,6 +11,7 @@ import pickle
 from collections import defaultdict
 from multiprocessing import Pool
 from util import textProcessor
+import numpy as np
 
 
 """
@@ -20,7 +21,7 @@ from util import textProcessor
     **BEFORE USING THIS**
 
     ensure: 
-    - features/stances of articles is uptodaet --->    ../resources//contentTrain//out
+    - features/stances of articles is up to date--->    ../resources//contentTrain//out
     - linguistic features are up to date --->     ../resources//dataFiles//lingFeatures//out/
     - reliability file is upto date -----> ../resources//compiledReliabilityDict702.txt
 """
@@ -30,7 +31,7 @@ def makeJointData():
     fullDataSet = [[], [], []]
     
     #reliability data
-    with open("../resources//compiledReliabilityDict702.txt", "r") as relFile:
+    with open("../resources//compiledReliabilityDict707.txt", "r") as relFile:
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1, relDict)
 
@@ -83,27 +84,24 @@ def makeJointData():
                 fullDataSet[2].append(fullClaimData[2])#file name
 
     
-    with open('../resources//jointModelData.pickle', 'wb') as handle:
+    with open('../resources//jointModelDataV2.pickle', 'wb') as handle:
         pickle.dump(fullDataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def trainJoint():
-    with open('../resources//jointModelDataV1.pickle', 'rb') as handle:
-        dataSet = pickle.load(handle)
+def trainJoint(dataSet):
+    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3.5 -q') #-v 10 
+
+    # llu.save_model("../resources//models/jointModelSample.model",model)
+    return model
 
 
-    model = llu.train(dataSet[0][185:], dataSet[1][185:], '-s 6 -w1 2.7') # -v 10 
+def testJoint(dataSet, model):
+    # model = llu.load_model("../resources//models/jointModelSample.model")
+    p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model)
 
-    llu.save_model("../resources//models/jointModelSample.model",model)
 
-
-def testJoint():
-    with open('../resources//jointModelDataV1.pickle', 'rb') as handle:
-        dataSet = pickle.load(handle)
-    
-    model = llu.load_model("../resources//models/jointModelSample.model")
-    p_labels, p_acc, p_vals = llu.predict(dataSet[0][:185], dataSet[1][:185], model, '-b 1')
-
+    correctTrue = 0
+    correctFalse = 0
     wrongTrue = 0
     wrongFalse = 0
     for i, x in enumerate(p_labels):
@@ -112,12 +110,63 @@ def testJoint():
                 wrongTrue += 1
             else:
                 wrongFalse += 1
+        else:
+            if int(dataSet[0][i]) == 1:
+                correctTrue += 1
+            else:
+                correctFalse += 1
     print(f"wrongFalse = {wrongFalse}")
-    print(f"wrongTrue = {wrongTrue}")         
+    print(f"wrongTrue = {wrongTrue}")
+
+    return [(wrongFalse, wrongTrue), (correctFalse, correctTrue)]
 
 
 
 if __name__ == "__main__":
     # makeJointData()
-    # trainJoint()
-    testJoint()
+
+    wrong = [0,0]
+    right = [0,0]
+
+    roc = []
+
+    with open('../resources//jointModelDataV2.pickle', 'rb') as handle:
+        dataSet = pickle.load(handle)
+
+
+    dataSize = len(dataSet[0])
+
+
+    for x in range(0,10):
+        print(x+1)
+        testStart = int(x*dataSize/10)
+        testStop = int((x+1)*dataSize/10)
+        one = [dataSet[0][0:testStart]+dataSet[0][testStop:], dataSet[1][0:testStart]+dataSet[1][testStop:]]
+        two = [dataSet[0][testStart:testStop], dataSet[1][testStart:testStop]]
+        model = trainJoint(one)
+        tempw, tempr = testJoint(two, model)
+        wrong = np.add(wrong, tempw)
+        right = np.add(right, tempr)
+
+        roc.append(right[1]/(right[1]+wrong[1]), wrong[0]/(wrong[0]+right[0]))
+
+        print("**********************************")
+
+    roc.sort(lambda x: x[0]/x[1])
+    auc = 0
+
+    for i, point in enumerate(roc):
+        if i > 0:
+            auc += (point[1] - roc[i-1][1])*roc[i-1][0]
+            auc +=  (point[1] - roc[i-1][1])*point[0]/2
+
+    print(auc)
+
+    print(f"total correctFalse = {right[0]}")
+    print(f"total correctTrue = {right[1]}")
+    print(f"total wrongFalse = {wrong[0]}")
+    print(f"total wrongTrue = {wrong[1]}")
+
+    print(f"total accuracy = {(right[1]+right[0])/(wrong[0]+wrong[1]+right[1]+right[0])}")
+    print(f"true accuracy {right[1]/(right[1]+wrong[1])}")
+    print(f"false accuracy {right[0]/(right[0]+wrong[0])}")

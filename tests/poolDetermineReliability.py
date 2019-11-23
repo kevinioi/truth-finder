@@ -69,7 +69,7 @@ def determineRel(dirAdr):
                                     stanceImpact.sort(key= lambda instance: max(instance[0], instance[1]),reverse=True)
 
                                     probSum = [0,0]
-                                    for index, probVals in enumerate(stanceImpact[:10]):
+                                    for index, probVals in enumerate(stanceImpact[:6]):
                                         probSum[0] += probVals[0]
                                         probSum[1] += probVals[1]
                                     probSum[0] /= index + 1

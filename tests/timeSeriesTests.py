@@ -33,7 +33,7 @@ def sumStrenthOverTime():
     refuteCount = 0
     supportSum = 0
     refuteSum = 0
-    for i in range(1,21):
+    for i in range(1,30):
         for opinion in strengths[0][i]:
             if opinion[0] > opinion[1]:
                 refuteCount += 1
@@ -48,7 +48,7 @@ def sumStrenthOverTime():
     refuteCount = 0
     supportSum = 0
     refuteSum = 0
-    for i in range(1,21):
+    for i in range(1,30):
         for opinion in strengths[1][i]:
             if opinion[0] > opinion[1]:
                 refuteCount += 1
@@ -69,7 +69,8 @@ def getRollingAvgStance(days):
 
     rollingStanceAvg = {}
 
-    for i in range(1,21):
+    for i in range(1,30):
+        rollingStanceAvg[i] = (0,0)
         for opinion in days[i]:
             if opinion[0] > opinion[1]:
                 refuteCount += 1
@@ -78,18 +79,18 @@ def getRollingAvgStance(days):
                 supportCount += 1
                 supportSum += opinion[1]
 
-            #put avg stance calc in try catch to avoid divide by zero
-            try:
-                supportStance = supportSum/supportCount
-            except:
-                supportStance = 0
-            try:
-                refuteStance = refuteSum/refuteCount
-            except:
-                refuteStance = 0
+        #put avg stance calc in try catch to avoid divide by zero
+        try:
+            supportStance = supportSum/supportCount
+        except:
+            supportStance = 0
+        try:
+            refuteStance = refuteSum/refuteCount
+        except:
+            refuteStance = 0
 
-            rollingStanceAvg[i] = (refuteStance,supportStance)
-        
+        rollingStanceAvg[i] = (refuteStance,supportStance)
+    
     return rollingStanceAvg
 
 
@@ -123,21 +124,47 @@ def getSlopeToDay(currentDay, days):
     denominatorTwo[1] = denominatorTwo[1]**2
 
     slopes = [0,0]
-    slopes[0] = (numeratorOne[0] - numeratorTwo[0])/(denominatorOne[0]-denominatorTwo[0])
-    slopes[1] = (numeratorOne[1] - numeratorTwo[1])/(denominatorOne[1]-denominatorTwo[1])
-        
-    
-
-    return None
+    try:
+        slopes[0] = (numeratorOne[0] - numeratorTwo[0])/(denominatorOne[0]-denominatorTwo[0])
+    except:
+        slopes[0] = 0
+    try:
+        slopes[1] = (numeratorOne[1] - numeratorTwo[1])/(denominatorOne[1]-denominatorTwo[1])
+    except:
+        slopes[1] = 0
+    return slopes
 
 
 def trendBasedCredibility(currentDay, days):
     rollingStanceAvg = getRollingAvgStance(days)
 
     slopes = getSlopeToDay(currentDay, days)
-    cred = (1+slope[1])*rollingStanceAvg[currentDay][1] - (1+slope[0])*rollingStanceAvg[currentDay][0]
+    cred = (1+slopes[1])*rollingStanceAvg[currentDay][1] - (1+slopes[0])*rollingStanceAvg[currentDay][0]
 
     return cred
 
 if __name__ == "__main__":
-    sumStrenthOverTime()
+
+    # sumStrenthOverTime()
+
+    with open("../resources//timeSeries//out/fullData.json", "r") as fp:
+        fullData = json.load(fp)
+
+    #           [false strength, true strength]
+    strengths = [{}, {}]
+
+    for i in range(1,30):
+        strengths[0][i] = []
+        strengths[1][i] = []
+
+
+    for claim in fullData:
+        for day in fullData[claim][0]:
+            for article in fullData[claim][0][day]:#for each article append the reliability corrected stance probabilites
+                strengths[fullData[claim][1]][int(day)].append((article[0]['2']*article[0]['1'],article[0]['3'] * article[0]['1']))
+
+    for day in range(1,30):
+        x = trendBasedCredibility(day, strengths[1])
+        # x = trendBasedCredibility(day, strengths[0])#refute class
+        print(x)
+    
