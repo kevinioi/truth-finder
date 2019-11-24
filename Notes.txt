@@ -1,3 +1,97 @@
+JOINT
+    Avg AUC = 0.757
+    total correctFalse = 1360
+    total correctTrue = 335
+    total wrongFalse = 416
+    total wrongTrue = 206
+    total accuracy = 0.7315494173500215
+    true accuracy = 0.6192236598890942
+    false accuracy = 0.7657657657657657
+    false precision = 0.8684546615581098
+    false recall = 0.7657657657657657
+    false F1 = 0.8138839018551766
+
+
+FULL DISTANT SUP TESTING
+    Avg AUC = 0.762
+    total correctFalse = 1236
+    total correctTrue = 354
+    total wrongFalse = 537
+    total wrongTrue = 187
+    total accuracy = 0.6871218668971478
+    true accuracy = 0.6543438077634011
+    false accuracy = 0.6971235194585449
+    false precision = 0.8685874912157414
+    false recall = 0.6971235194585449
+    false F1 = 0.7734668335419276
+
+
+STANCE + reliability
+    Avg AUC = 0.6600018118740435
+    total correctFalse = 1170
+    total correctTrue = 394
+    total wrongFalse = 603
+    total wrongTrue = 147
+    total accuracy = 0.675885911840968
+    true accuracy = 0.7282809611829945
+    false accuracy = 0.6598984771573604
+    false precision = 0.8883826879271071
+    false recall = 0.6598984771573604
+    false F1 = 0.7572815533980582
+
+Stance + linguistic
+    Avg AUC = 0.7047529958002048
+    total correctFalse = 1324
+    total correctTrue = 304
+    total wrongFalse = 449
+    total wrongTrue = 237
+    total accuracy = 0.7035436473638721
+    true accuracy = 0.5619223659889094
+    false accuracy = 0.7467569091934574
+    false precision = 0.8481742472773863
+    false recall = 0.7467569091934574
+    false F1 = 0.794241151769646
+
+Stance
+    Avg AUC = 0.742122659376973
+    total correctFalse = 1100
+    total correctTrue = 374
+    total wrongFalse = 673
+    total wrongTrue = 167
+    total accuracy = 0.6369922212618842
+    true accuracy = 0.6913123844731978
+    false accuracy = 0.6204173716864072
+    false precision = 0.8681925808997633
+    false recall = 0.6204173716864072
+    false F1 = 0.7236842105263157
+
+LINGUISTIC FEATURES
+    Avg AUC = 0.6029158749997351
+    total correctFalse = 1051
+    total correctTrue = 299
+    total wrongFalse = 722
+    total wrongTrue = 242
+    total accuracy = 0.5834053586862575
+    true accuracy = 0.5526802218114603
+    false accuracy = 0.59278059785674
+    false precision = 0.8128383604021655
+    false recall = 0.59278059785674
+    false F1 = 0.6855838225701238
+
+LINGUISTIC FEATURES + reliability
+    Avg AUC = 0.5115196012731331
+    total correctFalse = 1053
+    total correctTrue = 300
+    total wrongFalse = 720
+    total wrongTrue = 241
+    total accuracy = 0.5847018150388937
+    true accuracy = 0.5545286506469501
+    false accuracy = 0.5939086294416244
+    false precision = 0.8137557959814529
+    false recall = 0.5939086294416244
+    false F1 = 0.6866644929898924
+
+    
 ************************
 Notes
 ************************

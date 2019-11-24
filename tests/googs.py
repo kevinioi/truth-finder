@@ -14,29 +14,11 @@ import pickle
 
 from googlesearch import search
 
-
-def main():
-    # load credibility model
-    credModel = llu.load_model("../resources//models/distantSupervisionV2M2.model")
-
-    # load reliabilities
-    with open("../resources//compiledReliabilityDict702.txt", "r") as relFile:
-        relDict = json.load(relFile)
-    relDict = defaultdict(lambda: -1, relDict)
-
-    # get user input
-    print("Please Enter Your Claim:")
-    claim = input(">")
-
-    #pull top 30 google results
-    results = googleQuery(claim, 30)
-
-    #scrape all the articles
-    articleData = pullWebsourceData(claim, results)
-
+CREDIBILITY_MODEL = "../resources//models/distantSupervisionV2M2.model"
+STANCE_MODEL = "../resources/models/stance2v2.model"
 
 class article:
-    stance = 0
+    stance = [-1 ,[0,0]]
     snippets = []
     lingFeats = {}
     reliability = 0
@@ -52,6 +34,29 @@ def logDeco(func):
         return results
     return wrap
 
+def main():
+    # get user input
+    print("Please Enter Your Claim:")
+    claim = input(">")
+
+    #pull top 30 google results
+    results = googleQuery(claim, 30)
+
+    #scrape all the articles
+    articleData = pullWebsourceData(claim, results)
+
+    preprocessed = preprocessData(articleData)
+
+    credibility = predictCredibility(articleData, preprocessed)
+
+    explanation = getExplanatorySnippet(articleData, credibility)
+
+    print(f"Claim: {claim}")
+    print("*****************************************")
+    print(f"Verdict: {1 == credibility}")
+    print("*****************************************")
+    print("Evidence:")
+    print(explanation)
 
 @logDeco
 def googleQuery(queryString, numResults = 10):
@@ -87,7 +92,12 @@ def pullWebsourceData(claim, urlList):
 
     # load stance Classifier and features
     stanceFeatures = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
-    stanceClassifier = llu.load_model("../resources/models/stance2v2.model")
+    stanceClassifier = llu.load_model(STANCE_MODEL)
+
+    # load reliabilities
+    with open("../resources//compiledReliabilityDict707.txt", "r") as relFile:
+        relDict = json.load(relFile)
+    relDict = defaultdict(lambda: -1, relDict)
 
     #will hold all of the article objects
     articles = []
@@ -96,7 +106,7 @@ def pullWebsourceData(claim, urlList):
         newArticle = article()
         
         try: 
-            text = textProcessor.pullArticleText(url,timeoutTime=12)
+            text = textProcessor.pullArticleText(url[0],timeoutTime=12)
             snippets = textProcessor.getSnippets(text, 4)
             releventSnips = textProcessor.getRelevence(claim,snippets)
             numRelevent = len(releventSnips[0])         
@@ -120,7 +130,6 @@ def pullWebsourceData(claim, urlList):
                 
                 #sort by max overlap*probStance
                 stanceImpact.sort(key= lambda instance: max(instance[0][0], instance[0][1]),reverse=True)
-
                 stanceImpact = stanceImpact[:7]#KEEPING 7 RELEVENT SNIPS USE 5******* 
 
                 #attaching snippets and probabilites to article
@@ -130,7 +139,15 @@ def pullWebsourceData(claim, urlList):
                 sumProbs = [0.0,0.0]
                 for stance in stanceImpact[:5]:
                     sumProbs = np.add(sumProbs, stance[0])
-                newArticle.stance = int(sumProbs[0] < sumProbs[1])
+                newArticle.stance = [int(sumProbs[0] < sumProbs[1]), sumProbs]
+
+                # establish reliability for article based on domain
+                #set to 0.5 if new domain, minimum 0.1
+                newArticle.reliability = relDict[url[1]]
+                if newArticle.reliability == -1:
+                    newArticle.reliability = 0.5
+                elif newArticle.reliability < 0.1:
+                    newArticle.reliability = 0.1
 
                 # attaching article to list of articles for claim
                 articles.append(newArticle)
@@ -142,14 +159,59 @@ def pullWebsourceData(claim, urlList):
     return articles
 
 @logDeco
-def preprocessData():
+def preprocessData(articleList):
     """
         takes stored data and converts it into vectors useable by liblinear 
     """
+                    #[{features}, {features}...]
+    articleFeatureList = []
+
+    for article in articleList:
+        artFeatureDict = {}
+        artFeatureDict[2] = article.stance[1][0]
+        artFeatureDict[3] = article.stance[1][1]
+        articleFeatureList.append(artFeatureDict)
+
+    return articleFeatureList
+
+@logDeco
+def predictCredibility(articles, articlesFeatureList):
+    # load credibility model
+    credModel = llu.load_model(CREDIBILITY_MODEL)
+
+    #make article predictions
+    p_labels, p_acc, p_vals = llu.predict([], articlesFeatureList, credModel, '-b 1')
+
+    sumCurrentProbs = [0,0]
+    for i, probs in enumerate(p_vals):#run through results adjusting for reliability and summarizing for full claims
+        sumCurrentProbs[0] = probs[0](articles[i].reliability)
+        sumCurrentProbs[1] = probs[1](articles[i].reliability)
+
+    if sumCurrentProbs[0] <= sumCurrentProbs[1]:
+        return 0
+    else:
+        return 1
 
 
-    return None
+def getExplanatorySnippet(articleList, claimCred):
+    """
+    Run through snippets grabbing the snippet which most strongly supports the determined stance of the claim
 
+    return: snippet String 
+
+    param: articleList: list of article objects relevent to the claim
+    param: claimCred: {0,1} the determined credibility of the claim 
+    """
+    xSnippet = ""
+    xSnippetRelevence = 0
+
+    for article in articleList:
+        for snip in article.snippets:
+            if snip[0][claimCred] > xSnippetRelevence:
+                xSnippetRelevence = snip[0][claimCred]
+                xSnippet = snip[1]
+
+    return xSnippet
 
 if __name__ == "__main__":
     main()
