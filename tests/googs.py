@@ -14,33 +14,35 @@ import pickle
 
 from googlesearch import search
 
+
+def main():
+    # load credibility model
+    credModel = llu.load_model("../resources//models/distantSupervisionV2M2.model")
+
+    # load reliabilities
+    with open("../resources//compiledReliabilityDict702.txt", "r") as relFile:
+        relDict = json.load(relFile)
+    relDict = defaultdict(lambda: -1, relDict)
+
+    # get user input
+    print("Please Enter Your Claim:")
+    claim = input(">")
+
+    #pull top 30 google results
+    results = googleQuery(claim, 30)
+
+    #scrape all the articles
+    articleData = pullWebsourceData(claim, results)
+
+
 class article:
     stance = 0
-    snips = []
+    snippets = []
     lingFeats = {}
     reliability = 0
 
     def __init__(self, *args):
         pass        
-
-
-# load stance Classifier and features
-features = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
-stanceClassifier = llu.load_model("../resources/models/stance2v2.model")
-
-# load credibility model
-credModel = llu.load_model("../resources//models/jointModelSample.model")
-
-# load liguistic features
-with open('correctedLingfeats.pickle', 'rb') as handle:
-    lFeatsDict =  pickle.load(handle)
-lFeatsDict = defaultdict(lambda: 0, linguisticFeatures)
-
-# load reliabilities
-with open("../resources//compiledReliabilityDict702.txt", "r") as relFile:
-    relDict = json.load(relFile)
-relDict = defaultdict(lambda: -1, relDict)
-
 
 def logDeco(func):
     def wrap(*args, **kwargs):
@@ -73,8 +75,21 @@ def pullWebsourceData(claim, urlList):
         Goes to each website in the urlList and pulls the releven information from the html code.
         Stores the information in 
 
+        return: list of article objects
+
+        param: claim: String claim to reference article to
         param: urlList: tuples (url, domain) to be scraped 
     """
+    # load liguistic features
+    with open('correctedLingfeats.pickle', 'rb') as handle:
+        lFeatsDict =  pickle.load(handle)
+    lFeatsDict = defaultdict(lambda: 0, lFeatsDict)
+
+    # load stance Classifier and features
+    stanceFeatures = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
+    stanceClassifier = llu.load_model("../resources/models/stance2v2.model")
+
+    #will hold all of the article objects
     articles = []
 
     for url in urlList:
@@ -87,14 +102,15 @@ def pullWebsourceData(claim, urlList):
             numRelevent = len(releventSnips[0])         
 
             if numRelevent > 0:
-                lingFeats = textProcessor.prepArticleForClassification(text, linguisticFeatures)
-                claimLingFeats[source["link"]] = lingFeats
-                """
-                """
+                #Getting linguistic features in article
+                articleLinguisticFeatures = textProcessor.prepArticleForClassification(text, lFeatsDict)
+                article.lingFeats = articleLinguisticFeatures
 
-                snipData = textProcessor.prepListForClassification(releventSnips[0],features)
-                p_labels, p_acc, p_vals = llu.predict( [], snipData, model, '-b 1 -q')
+                #predicting stance classification
+                snipData = textProcessor.prepListForClassification(releventSnips[0], stanceFeatures)
+                p_labels, p_acc, p_vals = llu.predict( [], snipData, stanceClassifier, '-b 1 -q')
 
+                #discounting snippet probs by overlap
                 stanceImpact = []
                 for index, probVals in enumerate(p_vals):
                     probs = [[0,0], releventSnips[0][index]] # [[overlap*probS, overlap*prob], snippet]
@@ -107,18 +123,23 @@ def pullWebsourceData(claim, urlList):
 
                 stanceImpact = stanceImpact[:7]#KEEPING 7 RELEVENT SNIPS USE 5******* 
 
+                #attaching snippets and probabilites to article
                 newArticle.snippets = stanceImpact
-                newArticle.stance = 
 
-                articleInfo[0].append(truthValue)
-                articleInfo[1].append([stanceImpact, source["domain"], source["link"]])
+                #establish support or refute stance for article
+                sumProbs = [0.0,0.0]
+                for stance in stanceImpact[:5]:
+                    sumProbs = np.add(sumProbs, stance[0])
+                newArticle.stance = int(sumProbs[0] < sumProbs[1])
+
+                # attaching article to list of articles for claim
+                articles.append(newArticle)
+
         except: #Exception as e
             # raise e
             continue
-    
-    
-    
-    return None
+
+    return articles
 
 @logDeco
 def preprocessData():
@@ -131,16 +152,6 @@ def preprocessData():
 
 
 if __name__ == "__main__":
-    # get user input
-    print("Please Enter Your Claim:")
-    claim = input(">")
-
-    #pull top 30 google results
-    results = googleQuery(claim, 30)
-
-    pullWebsourceData(claim, results)
-
-
-    
+    main()
 
     pass
