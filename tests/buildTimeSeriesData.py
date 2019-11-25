@@ -14,9 +14,7 @@ import pickle
 
 
 """
-    takes raw snopes files from ../resources//contentTrain//one, two, three
-    - Pulls linguistic features, puts them under filename in ../resources//dataFiles//lingFeatures//out/
-    - Pulls stance class, truth values, domain, url, stores it under filename in ../resources//contentTrain//out/
+
 """
 
 def buildData(dirAdr):
@@ -31,7 +29,7 @@ def buildData(dirAdr):
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1, relDict)
 
-    with open("../resources//timeSeries//timeSeriesLinks.txt", "r") as sourceFile:
+    with open("../resources//timeSeries//timeSeriesLinks2.txt", "r") as sourceFile:
         timeSeriesLinks = json.load(sourceFile)
         
     #will hold all the info
@@ -113,11 +111,11 @@ def buildData(dirAdr):
 
                         #add article information to the days info
                         fullData[claim][0][day].append(articleInfo)
-                except: # Exception as e
-                    # raise e
+                except Exception as e: # 
+                    raise e
                     continue
             
-    with open("../resources//timeSeries//out/fullData.json", "w") as fp:
+    with open("../resources//timeSeries//out/fullData2.json", "w") as fp:
         json.dump(fullData, fp)
 
 
@@ -140,7 +138,7 @@ def parseFile(fileAdr):
             elif text[0].strip() == "-": #new source
                 info[currentFile][0][currentDay].append([text[1], text[2]])
 
-    with open("timeSeriesLinks.txt", "w") as file_:
+    with open("timeSeriesLinks2.txt", "w") as file_:
         json.dump(info, file_)
 
     # claimDict =    
@@ -163,5 +161,5 @@ def parseFile(fileAdr):
 
 if __name__ == "__main__":
     
-    buildData("timeSeriesLinks.txt")
-    # parseFile("TimeSeries.txt")
+    buildData("timeSeriesLinks2.txt")
+    # parseFile("..//resources//timeSeries/TimeSeries.txt")

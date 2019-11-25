@@ -123,9 +123,9 @@ def combineReliabilityScores():
         completeDict[x] = reliability[x][0]/(reliability[x][0]+reliability[x][1]) 
         sortme.append((x, reliability[x][0]/(reliability[x][0]+reliability[x][1]), reliability[x][0], reliability[x][1]))
 
-    sortme.sort(key=lambda x:x[2]+x[3])
-    for m in sortme:
-        print(m)
+    # sortme.sort(key=lambda x:x[2]+x[3])
+    # for m in sortme:
+    #     print(m)
 
     # for domain in reliability.items():
     #     if ((domain[1])[0] +(domain[1])[1]) >= 3:
@@ -134,20 +134,22 @@ def combineReliabilityScores():
     # myList.sort(key=lambda x: ((x[1])[0]*1.0)/((x[1])[0] +(x[1])[1]))
 
 
-    with open("compiledReliabilityDict707.txt", "w") as a:
+    with open("compiledReliabilityDictFINAL.txt", "w") as a:
         a.write(json.dumps(completeDict))
 
 
 if __name__ == "__main__":
-    with Pool(processes=4) as pool:
-        procs = []
-        procs.append(pool.apply_async(determineRel,("../resources//reliability//one",)))
-        procs.append(pool.apply_async(determineRel,("../resources//reliability//two",)))
-        procs.append(pool.apply_async(determineRel,("../resources//reliability//three",)))
-        procs.append(pool.apply_async(determineRel,("../resources//reliability//four",)))
-        procs.append(pool.apply_async(determineRel,("../resources//reliability//five",)))
-        procs.append(pool.apply_async(determineRel,("../resources//reliability//six",)))
+    # with Pool(processes=6) as pool:
+    #     procs = []
+    #     procs.append(pool.apply_async(determineRel,("../resources//reliability//one",)))
+    #     procs.append(pool.apply_async(determineRel,("../resources//reliability//two",)))
+    #     procs.append(pool.apply_async(determineRel,("../resources//reliability//three",)))
+    #     procs.append(pool.apply_async(determineRel,("../resources//reliability//four",)))
+    #     procs.append(pool.apply_async(determineRel,("../resources//reliability//five",)))
+    #     procs.append(pool.apply_async(determineRel,("../resources//reliability//six",)))
 
-        #wait for each process to finish
-        for proc in procs:
-            proc.wait()
+    #     #wait for each process to finish
+    #     for proc in procs:
+    #         proc.wait()
+
+    combineReliabilityScores()

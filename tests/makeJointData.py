@@ -12,7 +12,7 @@ from collections import defaultdict
 from multiprocessing import Pool
 from util import textProcessor
 import numpy as np
-
+from sklearn import metrics
 
 """
     Generates the final data needed for Joing model (CRF) training/testing
@@ -31,7 +31,8 @@ def makeJointData():
     fullDataSet = [[], [], []]
     
     #reliability data
-    with open("../resources//compiledReliabilityDict707.txt", "r") as relFile:
+    # with open("../resources//compiledReliabilityDict707.txt", "r") as relFile:
+    with open("../resources//compiledReliabilityDictFINAL.txt", "r") as relFile:
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1, relDict)
 
@@ -65,8 +66,8 @@ def makeJointData():
                     with open("../resources//dataFiles//lingFeatures//out/"+file_ , 'r') as lFile:
                         lFileDict = json.load(lFile)
 
-                    articleFeats[2] = sumprobabilities[0]#prob support
-                    articleFeats[3] = sumprobabilities[1]#prob refute
+                    articleFeats[2] = sumprobabilities[0]#prob refute
+                    articleFeats[3] = sumprobabilities[1]#prob support
                     articleFeats.update(lFileDict[article[2]])#Use url as key in lingfeats
                     for feat in articleFeats:
                         fullClaimData[1][int(feat)] += articleFeats[feat] #add features to dictionary representing aggregate claim features
@@ -84,27 +85,53 @@ def makeJointData():
                 fullDataSet[2].append(fullClaimData[2])#file name
 
     
-    with open('../resources//jointModelDataV2.pickle', 'wb') as handle:
+    with open('../resources//jointModelDataV4.pickle', 'wb') as handle:
         pickle.dump(fullDataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def trainJoint(dataSet):
-    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3.5 -q') #-v 10 
+
+    # newData = [[], []]
+
+    # for i, claim in enumerate(dataSet[1]):
+    #     newData[0].append(dataSet[0][i])
+    #     newDict = {}
+    #     newDict[1] = claim[1]
+    #     newDict[2] = claim[2]
+    #     newDict[3] = claim[3]
+    #     newData[1].append(newDict)
+
+
+    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 5 -q') # -v 10
 
     # llu.save_model("../resources//models/jointModelSample.model",model)
+    
     return model
 
 
 def testJoint(dataSet, model):
     # model = llu.load_model("../resources//models/jointModelSample.model")
-    p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model)
 
+    # newData = [[], []]
+
+    # for i, claim in enumerate(dataSet[1]):
+    #     newData[0].append(dataSet[0][i])
+    #     newDict = {}
+    #     newDict[1] = claim[1]
+    #     newDict[2] = claim[2]
+    #     newDict[3] = claim[3]
+    #     newData[1].append(newDict)
+
+    p_labels, p_acc, p_vals = llu.predict(dataSet[0], dataSet[1], model, '-b 1')
 
     correctTrue = 0
     correctFalse = 0
     wrongTrue = 0
     wrongFalse = 0
+
+    probs = []
     for i, x in enumerate(p_labels):
+        probs.append(p_vals[i][1])
         if int(x) != int(dataSet[0][i]):
             if int(dataSet[0][i]) == 1:
                 wrongTrue += 1
@@ -115,27 +142,39 @@ def testJoint(dataSet, model):
                 correctTrue += 1
             else:
                 correctFalse += 1
+    
+    #ROC/AUC calculations
+    fpr, tpr, thresholds = metrics.roc_curve(dataSet[0], probs)
+    auc = metrics.auc(fpr, tpr)
+
+    print(f'AUC = {auc}')
     print(f"wrongFalse = {wrongFalse}")
     print(f"wrongTrue = {wrongTrue}")
 
     return [(wrongFalse, wrongTrue), (correctFalse, correctTrue)]
 
 
-
 if __name__ == "__main__":
     # makeJointData()
 
-    wrong = [0,0]
-    right = [0,0]
-
-    roc = []
-
-    with open('../resources//jointModelDataV2.pickle', 'rb') as handle:
+    with open('../resources//jointModelDataV3.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
 
+    normDict = defaultdict(lambda : 0)
+    for i, claim in enumerate(dataSet[1]):
+        for feature in claim:
+            if claim[feature] > normDict[feature]: 
+                normDict[feature] = claim[feature] 
+
+    for i, claim in enumerate(dataSet[1]):
+        for feature in claim:
+            dataSet[1][i][feature] /= normDict[feature]
 
     dataSize = len(dataSet[0])
 
+    wrong = [0,0]
+    right = [0,0]
+    roc = []
 
     for x in range(0,10):
         print(x+1)
@@ -147,26 +186,18 @@ if __name__ == "__main__":
         tempw, tempr = testJoint(two, model)
         wrong = np.add(wrong, tempw)
         right = np.add(right, tempr)
-
-        roc.append(right[1]/(right[1]+wrong[1]), wrong[0]/(wrong[0]+right[0]))
-
         print("**********************************")
 
-    roc.sort(lambda x: x[0]/x[1])
-    auc = 0
-
-    for i, point in enumerate(roc):
-        if i > 0:
-            auc += (point[1] - roc[i-1][1])*roc[i-1][0]
-            auc +=  (point[1] - roc[i-1][1])*point[0]/2
-
-    print(auc)
 
     print(f"total correctFalse = {right[0]}")
     print(f"total correctTrue = {right[1]}")
     print(f"total wrongFalse = {wrong[0]}")
     print(f"total wrongTrue = {wrong[1]}")
-
     print(f"total accuracy = {(right[1]+right[0])/(wrong[0]+wrong[1]+right[1]+right[0])}")
-    print(f"true accuracy {right[1]/(right[1]+wrong[1])}")
-    print(f"false accuracy {right[0]/(right[0]+wrong[0])}")
+    print(f"true accuracy = {right[1]/(right[1]+wrong[1])}")
+    print(f"false accuracy = {right[0]/(right[0]+wrong[0])}")
+    precisionF = (right[0]+0.0)/(right[0]+wrong[1])
+    recallF = (right[0]+0.0)/(right[0]+wrong[0])
+    print(f"false precision = {precisionF}")
+    print(f"false recall = {recallF}")
+    print(f"false F1 = {2*(precisionF*recallF)/(precisionF+recallF)}")
