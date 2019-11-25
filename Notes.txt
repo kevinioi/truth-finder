@@ -91,6 +91,20 @@ LINGUISTIC FEATURES + reliability
     false recall = 0.5939086294416244
     false F1 = 0.6866644929898924
 
+
+Wiki Hoax performance
+    Distant Supervision Model - ../resources//models/distantSupervisionV2M3.model
+    claims = 109
+    wrongFalse = 14
+    wrongTrue = 0
+    accuracy = 0.8715596330275229
+
+Wiki Ficticious People performance
+    Distant Supervision Model - 
+    claims = 55
+    wrongFalse = 8
+    wrongTrue = 0
+    accuracy = 0.8545454545454545
     
 ************************
 Notes

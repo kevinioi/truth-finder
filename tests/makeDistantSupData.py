@@ -28,6 +28,75 @@ from sklearn import metrics
 """
 
 
+def main():
+    # makeDistantSupervisionData('../resources//wikiData//outPeople', '../resources//wikiData//lingFout')
+    # makeDistantSupervisionData('../resources//contentTrain//out', '../resources//dataFiles//lingFeatures//out')
+        
+    with open('../resources//properDistantSupervisionDataV3.pickle', 'rb') as handle:
+        dataSet = pickle.load(handle)
+
+    dataSize = len(dataSet[0])
+
+    normFDict = defaultdict(lambda: 0)
+    for fdict in dataSet[1]:
+        for feature in fdict:
+            if normFDict[feature] < fdict[feature]:
+                normFDict[feature] = fdict[feature]
+    
+    for i in range(len(dataSet[1])):
+        for feature in dataSet[1][i]:
+            dataSet[1][i][feature] /= normFDict[feature] 
+
+    """
+        REMOVES LINGUISTIC FEATURES
+    """
+    # for i in range(len(dataSet[1])):
+    #     cleanDict = {}
+    #     cleanDict[2] = dataSet[1][i][2]
+    #     cleanDict[3] = dataSet[1][i][3]
+    #     dataSet[1][i] = cleanDict
+
+    """
+        REMOVES STANCE PROBABILITIES
+    """
+    # for i in range(len(dataSet[1])):
+    #     dataSet[1][i][2] = 0
+    #     dataSet[1][i][3] = 0
+
+    wrong = [0,0]
+    right = [0,0]
+    auc = 0
+    #10-fold cross-validation
+    for x in range(0,10):
+        print(x+1)
+        testStart = int(x*dataSize/10)
+        testStop = int((x+1)*dataSize/10)
+        print(testStart)
+        print(testStop)
+        one = [dataSet[0][0:testStart]+dataSet[0][testStop:], dataSet[1][0:testStart]+dataSet[1][testStop:], dataSet[2][0:testStart]+dataSet[2][testStop:], dataSet[3][0:testStart]+dataSet[3][testStop:]]
+        two = [dataSet[0][testStart:testStop], dataSet[1][testStart:testStop], dataSet[2][testStart:testStop], dataSet[3][testStart:testStop]]
+        model = training(one)
+        tempw, tempr, tempauc = testModel(two, model)
+        wrong = np.add(wrong, tempw)
+        right = np.add(right, tempr)
+        auc += tempauc
+        print("**********************************")
+
+
+    print(f"Avg AUC = {auc/10}")
+    print(f"total correctFalse = {right[0]}")
+    print(f"total correctTrue = {right[1]}")
+    print(f"total wrongFalse = {wrong[0]}")
+    print(f"total wrongTrue = {wrong[1]}")
+    print(f"total accuracy = {(right[1]+right[0])/(wrong[0]+wrong[1]+right[1]+right[0])}")
+    print(f"true accuracy = {right[1]/(right[1]+wrong[1])}")
+    print(f"false accuracy = {right[0]/(right[0]+wrong[0])}")
+    precisionF = (right[0]+0.0)/(right[0]+wrong[1])
+    recallF = (right[0]+0.0)/(right[0]+wrong[0])
+    print(f"false precision = {precisionF}")
+    print(f"false recall = {recallF}")
+    print(f"false F1 = {2*(precisionF*recallF)/(precisionF+recallF)}")
+
 def OLDmakeDistantSupervisionData():
     # [[truthvalues], [{features}], [domain], [file_name]]
     fullDataSet = [[], [], [], []]
@@ -208,81 +277,17 @@ def training(dataSet, save = False):
                     [[truthVales], [{features}]]
     """
     # model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3.7 -q') # FOR FULL DISTANT SUPERVISION
-    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 6 -q') # FOR RELIABILITY + STANCE
     # model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3 -q') # FOR (STANCE + LINGUISTICS) & (RELIABILITY + STANCE)
 
+    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3.1 -q') # FOR RELIABILITY + STANCE
+
+
+
     if save:
-        llu.save_model("../resources//models/distantSupervisionV2M3.model",model)
+        llu.save_model(f"../resources//models/{save}.model",model)
 
     return model
 
 
 if __name__ == "__main__":
-    # makeDistantSupervisionData('../resources//wikiData//outPeople', '../resources//wikiData//lingFout')
-    # makeDistantSupervisionData('../resources//contentTrain//out', '../resources//dataFiles//lingFeatures//out')
-        
-    with open('../resources//properDistantSupervisionDataV3.pickle', 'rb') as handle:
-        dataSet = pickle.load(handle)
-
-    dataSize = len(dataSet[0])
-
-    normFDict = defaultdict(lambda: 0)
-    for fdict in dataSet[1]:
-        for feature in fdict:
-            if normFDict[feature] < fdict[feature]:
-                normFDict[feature] = fdict[feature]
-    
-    for i in range(len(dataSet[1])):
-        for feature in dataSet[1][i]:
-            dataSet[1][i][feature] /= normFDict[feature] 
-
-    """
-        REMOVES LINGUISTIC FEATURES
-    """
-    # for i in range(len(dataSet[1])):
-    #     cleanDict = {}
-    #     cleanDict[2] = dataSet[1][i][2]
-    #     cleanDict[3] = dataSet[1][i][3]
-    #     dataSet[1][i] = cleanDict
-
-    """
-        REMOVES STANCE PROBABILITIES
-    """
-    for i in range(len(dataSet[1])):
-        dataSet[1][i][2] = 0
-        dataSet[1][i][3] = 0
-
-    wrong = [0,0]
-    right = [0,0]
-    auc = 0
-    #10-fold cross-validation
-    for x in range(0,10):
-        print(x+1)
-        testStart = int(x*dataSize/10)
-        testStop = int((x+1)*dataSize/10)
-        print(testStart)
-        print(testStop)
-        one = [dataSet[0][0:testStart]+dataSet[0][testStop:], dataSet[1][0:testStart]+dataSet[1][testStop:], dataSet[2][0:testStart]+dataSet[2][testStop:], dataSet[3][0:testStart]+dataSet[3][testStop:]]
-        two = [dataSet[0][testStart:testStop], dataSet[1][testStart:testStop], dataSet[2][testStart:testStop], dataSet[3][testStart:testStop]]
-        model = training(one)
-        tempw, tempr, tempauc = testModel(two, model)
-        wrong = np.add(wrong, tempw)
-        right = np.add(right, tempr)
-        auc += tempauc
-        print("**********************************")
-
-
-    print(f"Avg AUC = {auc/10}")
-    print(f"total correctFalse = {right[0]}")
-    print(f"total correctTrue = {right[1]}")
-    print(f"total wrongFalse = {wrong[0]}")
-    print(f"total wrongTrue = {wrong[1]}")
-    print(f"total accuracy = {(right[1]+right[0])/(wrong[0]+wrong[1]+right[1]+right[0])}")
-    print(f"true accuracy = {right[1]/(right[1]+wrong[1])}")
-    print(f"false accuracy = {right[0]/(right[0]+wrong[0])}")
-    precisionF = (right[0]+0.0)/(right[0]+wrong[1])
-    recallF = (right[0]+0.0)/(right[0]+wrong[0])
-    print(f"false precision = {precisionF}")
-    print(f"false recall = {recallF}")
-    print(f"false F1 = {2*(precisionF*recallF)/(precisionF+recallF)}")
-    
+    main()

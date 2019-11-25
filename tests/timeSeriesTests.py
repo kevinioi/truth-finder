@@ -12,11 +12,15 @@ from collections import defaultdict
 
 
 def sumStrenthOverTime():
+    """
+        prints the summed support and refute strengths of timeseries claims over the 20 day period 
+
+    """
 
     #           [false strength, true strength]
     strengths = [{}, {}]
 
-    for i in range(1,21):
+    for i in range(1,31):
         strengths[0][i] = []
         strengths[1][i] = []
     
@@ -28,7 +32,7 @@ def sumStrenthOverTime():
             for article in fullData[claim][0][day]:#for each article append the reliability corrected stance probabilites
                 strengths[fullData[claim][1]][int(day)].append((article[0]['2']*article[0]['1'],article[0]['3'] * article[0]['1']))
 
-    #sum and print rolling probabilities
+    #sum and print rolling probabilities for false claims
     supportCount = 0
     refuteCount = 0
     supportSum = 0
@@ -41,9 +45,11 @@ def sumStrenthOverTime():
             else:
                 supportCount += 1
                 supportSum += opinion[1]
-        print(f"day {i}: support {supportSum/supportCount}  refute {refuteSum/refuteCount}")
+        print(f"day {i}: support {supportSum}  refute {refuteSum}")
 
     print("**********************************************")
+
+    #sum and print rolling probabilities for true claims
     supportCount = 0
     refuteCount = 0
     supportSum = 0
@@ -56,12 +62,21 @@ def sumStrenthOverTime():
             else:
                 supportCount += 1
                 supportSum += opinion[1]
-        print(f"day {i}: support {supportSum}/{supportCount}  refute {refuteSum}/{refuteCount}")
+        if supportCount == 0:
+            supportCount = 1
+        if refuteCount == 0:
+            refuteCount = 1
+        print(f"day {i}: support {supportSum}  refute {refuteSum}")
 
     return
 
 
 def getRollingAvgStance(days):
+    """
+        gets the average stance probabilities of all articles pretaining to a claim on each day in the 30 day period
+
+        param: dictionary with day #s as keys, and the a list of stance probabilities of the articles published on those days as values
+    """
     supportCount = 0
     refuteCount = 0
     supportSum = 0
@@ -72,12 +87,10 @@ def getRollingAvgStance(days):
     for i in range(1,30):
         rollingStanceAvg[i] = (0,0)
         for opinion in days[i]:
-            if opinion[0] > opinion[1]:
-                refuteCount += 1
-                refuteSum += opinion[0]
-            else:
-                supportCount += 1
-                supportSum += opinion[1]
+            refuteCount += 1
+            refuteSum += opinion[0]
+            supportCount += 1
+            supportSum += opinion[1]
 
         #put avg stance calc in try catch to avoid divide by zero
         try:
@@ -95,7 +108,9 @@ def getRollingAvgStance(days):
 
 
 def getSlopeToDay(currentDay, days):
+    """
 
+    """
     rollingStanceAvg = getRollingAvgStance(days)
 
     #           [refuteProb, supportProb] 
@@ -136,9 +151,18 @@ def getSlopeToDay(currentDay, days):
 
 
 def trendBasedCredibility(currentDay, days):
+    """
+        calculates the credibility using the trend-aware approach
+
+        param: currentDay: integer (t), the time since the claim arose
+        param: days 
+
+        returns float value representing the credibility 
+    """
     rollingStanceAvg = getRollingAvgStance(days)
 
     slopes = getSlopeToDay(currentDay, days)
+
     cred = (1+slopes[1])*rollingStanceAvg[currentDay][1] - (1+slopes[0])*rollingStanceAvg[currentDay][0]
 
     return cred
@@ -150,21 +174,26 @@ if __name__ == "__main__":
     with open("../resources//timeSeries//out/fullData.json", "r") as fp:
         fullData = json.load(fp)
 
-    #           [false strength, true strength]
-    strengths = [{}, {}]
+    judgements = [defaultdict(lambda: [0,0]),defaultdict(lambda: [0,0])]
 
-    for i in range(1,30):
-        strengths[0][i] = []
-        strengths[1][i] = []
+    dayProbs = {}
 
-
+    #run through days 1-30 for each claim
     for claim in fullData:
+        for i in range(1,30):
+            dayProbs[i] = []
+
         for day in fullData[claim][0]:
             for article in fullData[claim][0][day]:#for each article append the reliability corrected stance probabilites
-                strengths[fullData[claim][1]][int(day)].append((article[0]['2']*article[0]['1'],article[0]['3'] * article[0]['1']))
+                dayProbs[int(day)].append((article[0]['2']*article[0]['1'],article[0]['3'] * article[0]['1']))
 
+        for day in range(1,30):
+            x = trendBasedCredibility(day, dayProbs)
+            judgements[fullData[claim][1]][day][fullData[claim][1]==(x>0)] += 1
+
+    # true claims
     for day in range(1,30):
-        x = trendBasedCredibility(day, strengths[1])
-        # x = trendBasedCredibility(day, strengths[0])#refute class
-        print(x)
-    
+        print(judgements[1][day])   
+    print("**************")     
+    for day in range(1,30):
+        print(judgements[0][day])
