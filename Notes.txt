@@ -106,6 +106,17 @@ Wiki Ficticious People performance
     wrongTrue = 0
     accuracy = 0.8545454545454545
     
+
+Social Media
+    Only social media sources
+        total accuracy = 0.6266233766233766
+        true accuracy = 0.6301369863013698
+        false accuracy = 0.625531914893617
+
+    Full article set
+        total accuracy = 0.7612903225806451
+        true accuracy = 0.8082191780821918
+        false accuracy = 0.7468354430379747
 ************************
 Notes
 ************************

@@ -17,7 +17,7 @@ import pickle
 
 """
 
-def buildData(dirAdr):
+def buildData(fileName):
     features = featureBag.getFeatureFile("../resources/stanceFeatsV2.pickle")
     model = llu.load_model("../resources/models/stance2v2.model")
 
@@ -29,7 +29,7 @@ def buildData(dirAdr):
         relDict = json.load(relFile)
     relDict = defaultdict(lambda: -1, relDict)
 
-    with open("../resources//timeSeries//timeSeriesLinks2.txt", "r") as sourceFile:
+    with open("../resources//timeSeries//"+fileName, "r") as sourceFile:
         timeSeriesLinks = json.load(sourceFile)
         
     #will hold all the info
@@ -111,11 +111,11 @@ def buildData(dirAdr):
 
                         #add article information to the days info
                         fullData[claim][0][day].append(articleInfo)
-                except Exception as e: # 
-                    raise e
+                except  : #Exception as e 
+                    # raise e
                     continue
             
-    with open("../resources//timeSeries//out/fullData2.json", "w") as fp:
+    with open("../resources//timeSeries//out/fullData3.json", "w") as fp:
         json.dump(fullData, fp)
 
 
@@ -138,7 +138,7 @@ def parseFile(fileAdr):
             elif text[0].strip() == "-": #new source
                 info[currentFile][0][currentDay].append([text[1], text[2]])
 
-    with open("timeSeriesLinks2.txt", "w") as file_:
+    with open("timeSeriesLinks3.txt", "w") as file_:
         json.dump(info, file_)
 
     # claimDict =    
@@ -161,5 +161,5 @@ def parseFile(fileAdr):
 
 if __name__ == "__main__":
     
-    buildData("timeSeriesLinks2.txt")
+    buildData("timeSeriesLinks3.txt")
     # parseFile("..//resources//timeSeries/TimeSeries.txt")
