@@ -97,7 +97,13 @@ def checkForSocials():
     print(claimCount)
 
 def checkLongTail():
+    """
+        shows counts of claims with certain numbers of supporting articles
+    """
     claimCount = defaultdict(lambda: 0)
+
+    for x in range(0,31):
+        claimCount[x]
 
     for file_ in os.listdir("../resources//contentTrain//out"):
         articleCount = 0
@@ -105,8 +111,8 @@ def checkLongTail():
             with open("../resources//contentTrain//out/" + file_, 'r') as doc:
                 claimData =  json.loads(doc.read())
 
-            for _ in claimData[1]:
-                articleCount+=1
+            
+            articleCount = len(claimData[1])
 
         claimCount[articleCount] += 1
 
@@ -115,8 +121,54 @@ def checkLongTail():
         print(f'{x}: {claimCount[x]}')
 
 
+
+
+def getLongTail(maxArticleCount):
+
+      # [[truthvalues], [{features}], [domain], [file_name]]
+    longTailData = [[],[],[],[]]
+
+    for file_ in os.listdir("../resources//contentTrain//out"):
+        articleCount = 0
+        if file_.endswith(".json"):
+            with open("../resources//contentTrain//out/" + file_, 'r') as doc:
+                claimData =  json.loads(doc.read())
+
+
+            articleCount = len(claimData[0])
+            
+            if articleCount > 0 and articleCount <= maxArticleCount:
+                for article in claimData[1]:
+                    articleFeats = {}
+                    longTailData[0].append(claimData[0][0])
+                    sumprobabilities = [0,0]
+
+                    #avg probabilities of first 5 snippets in article
+                    for i, snippet in enumerate(article[0][:5]):
+                        sumprobabilities[0] += snippet[0][0]
+                        sumprobabilities[1] += snippet[0][1]
+                    sumprobabilities[0] /= i+1
+                    sumprobabilities[1] /= i+1
+                    
+                    #get ling feats
+                    with open("../resources//dataFiles//lingFeatures//out/"+file_ , 'r') as lFile:
+                        lFileDict = json.load(lFile)
+
+                    articleFeats[2] = sumprobabilities[0]#prob refute
+                    articleFeats[3] = sumprobabilities[1]#prob support
+                    articleFeats.update(lFileDict[article[2]])#Use url as key in lingfeats
+                    intarticleFeats = {}
+                    for feat in articleFeats:
+                        intarticleFeats[int(feat)] = articleFeats[feat]
+                    longTailData[1].append(intarticleFeats)#features
+                    longTailData[2].append(article[1]) #domain
+                    longTailData[3].append(file_)
+    
+    return longTailData
+
 if __name__ == "__main__":
     # checkForSocials()
-    # checkLongTail()
-    getSocialsDataSet()
+    checkLongTail()
+    # getSocialsDataSet()
+
 

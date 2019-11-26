@@ -11,7 +11,7 @@ from util import featureBag
 from util import textProcessor
 from collections import defaultdict
 import pickle
-
+import numpy as np
 from googlesearch import search
 
 CREDIBILITY_MODEL = "../resources//models/distantSupervisionV2M2.model"
@@ -55,8 +55,9 @@ def main():
     print("*****************************************")
     print(f"Verdict: {1 == credibility}")
     print("*****************************************")
-    print("Evidence:")
-    print(explanation)
+    print("Explanation:")
+    print(explanation[1])
+    print(f"***\nAquired from: {explanation[2]}")
 
 @logDeco
 def googleQuery(queryString, numResults = 10):
@@ -102,11 +103,12 @@ def pullWebsourceData(claim, urlList):
     #will hold all of the article objects
     articles = []
 
-    for url in urlList:
+    for urlTuple in urlList:
+        url = urlTuple[0]
         newArticle = article()
         
         try: 
-            text = textProcessor.pullArticleText(url[0],timeoutTime=12)
+            text = textProcessor.pullArticleText(url,timeoutTime=20)
             snippets = textProcessor.getSnippets(text, 4)
             releventSnips = textProcessor.getRelevence(claim,snippets)
             numRelevent = len(releventSnips[0])         
@@ -123,7 +125,7 @@ def pullWebsourceData(claim, urlList):
                 #discounting snippet probs by overlap
                 stanceImpact = []
                 for index, probVals in enumerate(p_vals):
-                    probs = [[0,0], releventSnips[0][index]] # [[overlap*probS, overlap*prob], snippet]
+                    probs = [[0,0], releventSnips[0][index], url] # [[overlap*probS, overlap*prob], snippet, url]
                     probs[0][0] = (releventSnips[1])[index]*probVals[0]
                     probs[0][1] = (releventSnips[1])[index]*probVals[1]
                     stanceImpact.append(probs)
@@ -152,7 +154,7 @@ def pullWebsourceData(claim, urlList):
                 # attaching article to list of articles for claim
                 articles.append(newArticle)
 
-        except: #Exception as e
+        except Exception as e: #
             # raise e
             continue
 
@@ -184,10 +186,11 @@ def predictCredibility(articles, articlesFeatureList):
 
     sumCurrentProbs = [0,0]
     for i, probs in enumerate(p_vals):#run through results adjusting for reliability and summarizing for full claims
-        sumCurrentProbs[0] = probs[0](articles[i].reliability)
-        sumCurrentProbs[1] = probs[1](articles[i].reliability)
+        sumCurrentProbs[0] = probs[0]*(articles[i].reliability)
+        sumCurrentProbs[1] = probs[1]*(articles[i].reliability)
 
-    if sumCurrentProbs[0] <= sumCurrentProbs[1]:
+    print(sumCurrentProbs)
+    if sumCurrentProbs[0] >= sumCurrentProbs[1]:
         return 0
     else:
         return 1
@@ -209,11 +212,10 @@ def getExplanatorySnippet(articleList, claimCred):
         for snip in article.snippets:
             if snip[0][claimCred] > xSnippetRelevence:
                 xSnippetRelevence = snip[0][claimCred]
-                xSnippet = snip[1]
+                xSnippet = snip
 
     return xSnippet
 
 if __name__ == "__main__":
     main()
-
     pass

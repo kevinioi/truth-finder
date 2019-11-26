@@ -26,7 +26,7 @@ from sklearn import metrics
     - features/stances of articles is up to date --->    ../resources//contentTrain//out
     - linguistic features are up to date --->     ../resources//dataFiles//lingFeatures//out/
 """
-
+maxArticleCount = 30
 
 def main():
     # makeDistantSupervisionData('../resources//wikiData//outPeople', '../resources//wikiData//lingFout')
@@ -82,7 +82,6 @@ def main():
         auc += tempauc
         print("**********************************")
 
-
     print(f"Avg AUC = {auc/10}")
     print(f"total correctFalse = {right[0]}")
     print(f"total correctTrue = {right[1]}")
@@ -96,45 +95,6 @@ def main():
     print(f"false precision = {precisionF}")
     print(f"false recall = {recallF}")
     print(f"false F1 = {2*(precisionF*recallF)/(precisionF+recallF)}")
-
-def OLDmakeDistantSupervisionData():
-    # [[truthvalues], [{features}], [domain], [file_name]]
-    fullDataSet = [[], [], [], []]
-    
-    for file_ in os.listdir("../resources//contentTrain//out"):
-        if file_.endswith(".json"):
-            with open("../resources//contentTrain//out/" + file_, 'r') as doc:
-                claimData =  json.loads(doc.read())
-            
-            for article in claimData[1]:
-                articleFeats = {}
-                fullDataSet[0].append(claimData[0][0])#truth value
-                sumprobabilities = [0,0]
-
-                #avg probabilities of first 5 snippets in article
-                for i, snippet in enumerate(article[0][:5]):
-                    sumprobabilities[0] += snippet[0][0]
-                    sumprobabilities[1] += snippet[0][1]
-                sumprobabilities[0] /= i+1
-                sumprobabilities[1] /= i+1
-                
-                #get ling feats
-                with open("../resources//dataFiles//lingFeatures//out/"+file_ , 'r') as lFile:
-                    lFileDict = json.load(lFile)
-
-                articleFeats[2] = sumprobabilities[0]#prob support
-                articleFeats[3] = sumprobabilities[1]#prob refute
-                articleFeats.update(lFileDict[article[2]])#Use url as key in lingfeats
-                intarticleFeats = {}
-                for feat in articleFeats:
-                    intarticleFeats[int(feat)] = articleFeats[feat]
-                fullDataSet[1].append(intarticleFeats)#features
-                fullDataSet[2].append(article[1]) #domain
-                fullDataSet[3].append(file_)
-    
-    with open('../resources//properDistantSupervisionDataV3.pickle', 'wb') as handle:
-        pickle.dump(fullDataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
 
 
 def makeDistantSupervisionData(infoAdr, lingfeatsAdr):
@@ -209,18 +169,22 @@ def testModel(dataSet, model):
     rocCalc = [[],[]]
     sumCurrentProbs = [0,0]
     sCount = 0
+    articleCount = 0
     for i, probs in enumerate(p_vals):#run through results adjusting for reliability and summarizing for full claims
-
         if (i>0) and (current_claim != dataSet[3][i]):#not first claim in dataset AND new claim
-            if sumCurrentProbs[0] <= sumCurrentProbs[1]:
-                judgements.append((1, current_claim_truth))
-            else:
-                judgements.append((0,current_claim_truth))
-            rocCalc[0].append(current_claim_truth)
-            rocCalc[1].append(sumCurrentProbs[1]/sCount)
+            if articleCount <= maxArticleCount:    
+                if sumCurrentProbs[0] <= sumCurrentProbs[1]:
+                    judgements.append((1, current_claim_truth))
+                else:
+                    judgements.append((0,current_claim_truth))
+
+                rocCalc[0].append(current_claim_truth)
+                rocCalc[1].append(sumCurrentProbs[1]/sCount)
+            articleCount=0
             sCount = 0
             sumCurrentProbs = [0,0]
-        
+            
+        articleCount +=1
         #sum probabilities for the current claim
         sCount += 1
         current_claim_truth = dataSet[0][i]
@@ -279,7 +243,9 @@ def training(dataSet, save = False):
     # model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3.7 -q') # FOR FULL DISTANT SUPERVISION
     # model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3 -q') # FOR (STANCE + LINGUISTICS) & (RELIABILITY + STANCE)
 
-    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 3.1 -q') # FOR RELIABILITY + STANCE
+
+    ratio = 1/(sum(dataSet[0])/len(dataSet[0]))
+    model = llu.train(dataSet[0], dataSet[1], f'-s 6 -w1 {ratio} -q') # FOR RELIABILITY + STANCE
 
 
 
@@ -288,6 +254,47 @@ def training(dataSet, save = False):
 
     return model
 
+def getLongTail(maxArticleCount):
+
+      # [[truthvalues], [{features}], [domain], [file_name]]
+    longTailData = [[],[],[],[]]
+
+    for file_ in os.listdir("../resources//contentTrain//out"):
+        articleCount = 0
+        if file_.endswith(".json"):
+            with open("../resources//contentTrain//out/" + file_, 'r') as doc:
+                claimData =  json.loads(doc.read())
+
+            articleCount = len(claimData[1])
+            
+            if articleCount > 0 and articleCount <= maxArticleCount:
+                for article in claimData[1]:
+                    articleFeats = {}
+                    longTailData[0].append(claimData[0][0])
+                    sumprobabilities = [0,0]
+
+                    #avg probabilities of first 5 snippets in article
+                    for i, snippet in enumerate(article[0][:5]):
+                        sumprobabilities[0] += snippet[0][0]
+                        sumprobabilities[1] += snippet[0][1]
+                    sumprobabilities[0] /= i+1
+                    sumprobabilities[1] /= i+1
+                    
+                    #get ling feats
+                    with open("../resources//dataFiles//lingFeatures//out/"+file_ , 'r') as lFile:
+                        lFileDict = json.load(lFile)
+
+                    articleFeats[2] = sumprobabilities[0]#prob refute
+                    articleFeats[3] = sumprobabilities[1]#prob support
+                    articleFeats.update(lFileDict[article[2]])#Use url as key in lingfeats
+                    intarticleFeats = {}
+                    for feat in articleFeats:
+                        intarticleFeats[int(feat)] = articleFeats[feat]
+                    longTailData[1].append(intarticleFeats)#features
+                    longTailData[2].append(article[1]) #domain
+                    longTailData[3].append(file_)
+    
+    return longTailData
 
 if __name__ == "__main__":
     main()

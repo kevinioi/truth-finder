@@ -25,6 +25,19 @@ FULL DISTANT SUP TESTING
     false recall = 0.6971235194585449
     false F1 = 0.7734668335419276
 
+    Avg AUC = 0.6273546539838786
+    total correctFalse = 1173
+    total correctTrue = 371
+    total wrongFalse = 600
+    total wrongTrue = 170
+    total accuracy = 0.6672428694900605
+    true accuracy = 0.6857670979667283
+    false accuracy = 0.6615905245346869
+    false precision = 0.8734177215189873
+    false recall = 0.6615905245346869
+    false F1 = 0.7528883183568678
+
+
 
 STANCE + reliability
     Avg AUC = 0.6600018118740435
@@ -117,6 +130,50 @@ Social Media
         total accuracy = 0.7612903225806451
         true accuracy = 0.8082191780821918
         false accuracy = 0.7468354430379747
+
+
+
+Long Tail Claims
+
+articles >= 3 --> 0.626
+    total accuracy = 0.6083333333333333
+    true accuracy = 0.6567164179104478
+    false accuracy = 0.5972696245733788
+articles >= 6 --> 0.605
+    total accuracy = 0.6214285714285714
+    true accuracy = 0.5808823529411765
+    false accuracy = 0.6312056737588653 
+articles >= 9 --> 0.614
+    total accuracy = 0.6373106060606061
+    true accuracy = 0.57847533632287
+    false accuracy = 0.6530612244897959
+articles >= 12 --> 0.64
+    total accuracy = 0.6512784090909091
+    true accuracy = 0.6215384615384615
+    false accuracy = 0.6602031394275162
+articles >= 15 --> 0.645
+    total accuracy = 0.6632768361581921
+    true accuracy = 0.637717121588089py
+articles >= 18 --> 0.66
+    total accuracy = 0.665545410860163
+    true accuracy = 0.6652806652806653
+    false accuracy = 0.665625
+articles >= 21 --> 0.670
+    total accuracy = 0.666369710467706
+    true accuracy = 0.6782273603082851
+    false accuracy = 0.6628041714947857
+articles >= 24 --> 0.6715
+    total accuracy = 0.6665215498476273
+    true accuracy = 0.6828358208955224
+    false accuracy = 0.6615559341283361
+articles >= 27 --> 0.67335
+    total accuracy = 0.666955017301038
+    true accuracy = 0.6857670979667283
+    false accuracy = 0.6612083568605308
+articles >= 30 --> 0.673
+    0.666955017301038
+    0.6857670979667283
+    0.6612083568605308
 ************************
 Notes
 ************************
