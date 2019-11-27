@@ -32,7 +32,8 @@ def main():
     # makeDistantSupervisionData('../resources//wikiData//outPeople', '../resources//wikiData//lingFout')
     # makeDistantSupervisionData('../resources//contentTrain//out', '../resources//dataFiles//lingFeatures//out')
         
-    with open('../resources//properDistantSupervisionDataV3.pickle', 'rb') as handle:
+    # with open('../resources//properDistantSupervisionDataV3.pickle', 'rb') as handle:
+    with open('../resources//socialData.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
 
     dataSize = len(dataSet[0])
@@ -190,7 +191,6 @@ def testModel(dataSet, model):
         current_claim_truth = dataSet[0][i]
         current_claim = dataSet[3][i]
         reliability = relDict[dataSet[2][i]]
-        # reliability = 1
 
         if reliability == -1:
             reliability = 0.5
@@ -200,6 +200,8 @@ def testModel(dataSet, model):
             reliability = reliability*2/3
         sumCurrentProbs[0] += probs[0]*reliability
         sumCurrentProbs[1] += probs[1]*reliability
+        # sumCurrentProbs[0] += probs[0]
+        # sumCurrentProbs[1] += probs[1]
 
     correctTrue = 0
     correctFalse = 0

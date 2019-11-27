@@ -37,6 +37,7 @@ def makeJointData():
     relDict = defaultdict(lambda: -1, relDict)
 
 
+    # for file_ in os.listdir("../resources//wikiData//outPeople"):
     for file_ in os.listdir("../resources//contentTrain//out"):
         if file_.endswith(".json"):
 
@@ -44,6 +45,7 @@ def makeJointData():
             # fullClaimData = [truth value,{features},file_]
             fullClaimData = [-1,defaultdict(lambda: 0),""]
 
+            # with open("../resources//wikiData//outPeople/" + file_, 'r') as doc:
             with open("../resources//contentTrain//out/" + file_, 'r') as doc:
                 claimData =  json.loads(doc.read())
             
@@ -63,6 +65,7 @@ def makeJointData():
                     sumprobabilities[1] /= i+1
                     
                     #get ling feats
+                    # with open("../resources//wikiData//lingFout/"+file_ , 'r') as lFile:
                     with open("../resources//dataFiles//lingFeatures//out/"+file_ , 'r') as lFile:
                         lFileDict = json.load(lFile)
 
@@ -85,7 +88,7 @@ def makeJointData():
                 fullDataSet[2].append(fullClaimData[2])#file name
 
     
-    with open('../resources//jointModelDataV4.pickle', 'wb') as handle:
+    with open('../resources//newJointData.pickle', 'wb') as handle:
         pickle.dump(fullDataSet, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -102,7 +105,11 @@ def trainJoint(dataSet):
     #     newData[1].append(newDict)
 
 
-    model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 5 -q') # -v 10
+    ratio = 1/(sum(dataSet[0])/len(dataSet[0]))
+    print(ratio)
+    model = llu.train(dataSet[0], dataSet[1], f'-s 6 -w1 {ratio} -q') # -v 10
+
+    # model = llu.train(dataSet[0], dataSet[1], '-s 6 -w1 5 -q') # -v 10
 
     # llu.save_model("../resources//models/jointModelSample.model",model)
     
@@ -157,7 +164,12 @@ def testJoint(dataSet, model):
 if __name__ == "__main__":
     # makeJointData()
 
-    with open('../resources//jointModelDataV3.pickle', 'rb') as handle:
+    # with open('../resources/socialPureJointData.pickle', 'rb') as handle:
+    #     dataSet = pickle.load(handle)
+    # model = llu.load_model("../resources//models/jointModelM1.model")
+    # llu.predict(dataSet[0], dataSet[1], model)
+
+    with open('../resources//socialJointData.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
 
     normDict = defaultdict(lambda : 0)
@@ -168,7 +180,8 @@ if __name__ == "__main__":
 
     for i, claim in enumerate(dataSet[1]):
         for feature in claim:
-            dataSet[1][i][feature] /= normDict[feature]
+            if int(feature) != 2 and int(feature) != 3:
+                dataSet[1][i][feature] /= normDict[feature]
 
     dataSize = len(dataSet[0])
 

@@ -1,16 +1,15 @@
 JOINT
-    Avg AUC = 0.757
-    total correctFalse = 1360
-    total correctTrue = 335
-    total wrongFalse = 416
-    total wrongTrue = 206
-    total accuracy = 0.7315494173500215
-    true accuracy = 0.6192236598890942
-    false accuracy = 0.7657657657657657
-    false precision = 0.8684546615581098
-    false recall = 0.7657657657657657
-    false F1 = 0.8138839018551766
-
+    Avg AUC = 0.7628811148356429
+    total correctFalse = 1383
+    total correctTrue = 333
+    total wrongFalse = 393
+    total wrongTrue = 208
+    total accuracy = 0.7406128614587829
+    true accuracy = 0.6155268022181146
+    false accuracy = 0.7787162162162162
+    false precision = 0.86926461345066
+    false recall = 0.7787162162162162
+    false F1 = 0.8215028215028216
 
 FULL DISTANT SUP TESTING
     Avg AUC = 0.762
@@ -24,20 +23,6 @@ FULL DISTANT SUP TESTING
     false precision = 0.8685874912157414
     false recall = 0.6971235194585449
     false F1 = 0.7734668335419276
-
-    Avg AUC = 0.6273546539838786
-    total correctFalse = 1173
-    total correctTrue = 371
-    total wrongFalse = 600
-    total wrongTrue = 170
-    total accuracy = 0.6672428694900605
-    true accuracy = 0.6857670979667283
-    false accuracy = 0.6615905245346869
-    false precision = 0.8734177215189873
-    false recall = 0.6615905245346869
-    false F1 = 0.7528883183568678
-
-
 
 STANCE + reliability
     Avg AUC = 0.6600018118740435
@@ -119,19 +104,85 @@ Wiki Ficticious People performance
     wrongTrue = 0
     accuracy = 0.8545454545454545
     
+********************************************************************
+Social Media        311 Claims
+********************************************************************
+Distant Supervision
+    Full SET    4297
+        Avg AUC = nan
+        total correctFalse = 190
+        total correctTrue = 53
+        total wrongFalse = 47
+        total wrongTrue = 20
+        total accuracy = 0.7838709677419354
+        true accuracy = 0.726027397260274
+        false accuracy = 0.8016877637130801
+        false precision = 0.9047619047619048
+        false recall = 0.8016877637130801
+        false F1 = 0.8501118568232663
 
-Social Media
-    Only social media sources
-        total accuracy = 0.6266233766233766
-        true accuracy = 0.6301369863013698
-        false accuracy = 0.625531914893617
+    Pure Social 1192
+        Avg AUC = nan
+        total correctFalse = 177
+        total correctTrue = 38
+        total wrongFalse = 58
+        total wrongTrue = 35
+        total accuracy = 0.698051948051948
+        true accuracy = 0.5205479452054794
+        false accuracy = 0.7531914893617021
+        false precision = 0.8349056603773585
+        false recall = 0.7531914893617021
+        false F1 = 0.7919463087248322
 
-    Full article set
-        total accuracy = 0.7612903225806451
-        true accuracy = 0.8082191780821918
-        false accuracy = 0.7468354430379747
+    Pure Web    3105
+        Avg AUC = nan
+        total correctFalse = 195
+        total correctTrue = 52
+        total wrongFalse = 39
+        total wrongTrue = 21
+        total accuracy = 0.8045602605863192
+        true accuracy = 0.7123287671232876
+        false accuracy = 0.8333333333333334
+        false precision = 0.9027777777777778
+        false recall = 0.8333333333333334
+        false F1 = 0.8666666666666667
 
+JOINT Social
+    PURE Social
+        total correctFalse = 190
+        total correctTrue = 40
+        total wrongFalse = 47
+        total wrongTrue = 34
+        total accuracy = 0.7395498392282959
+        true accuracy = 0.5405405405405406
+        false accuracy = 0.8016877637130801
+        false precision = 0.8482142857142857
+        false recall = 0.8016877637130801
+        false F1 = 0.8242950108459871
 
+    Pure Web
+        total correctFalse = 182
+        total correctTrue = 47
+        total wrongFalse = 55
+        total wrongTrue = 27
+        total accuracy = 0.7363344051446945
+        true accuracy = 0.6351351351351351
+        false accuracy = 0.7679324894514767
+        false precision = 0.8708133971291866
+        false recall = 0.7679324894514767
+        false F1 = 0.8161434977578474
+
+    Whole
+        total correctFalse = 200
+        total correctTrue = 47
+        total wrongFalse = 37
+        total wrongTrue = 27
+        total accuracy = 0.7942122186495176
+        true accuracy = 0.6351351351351351
+        false accuracy = 0.8438818565400844
+        false precision = 0.8810572687224669
+        false recall = 0.8438818565400844
+        false F1 = 0.8620689655172413
 
 Long Tail Claims
 
