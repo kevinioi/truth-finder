@@ -32,11 +32,9 @@ def main():
     # makeDistantSupervisionData('../resources//wikiData//outPeople', '../resources//wikiData//lingFout')
     # makeDistantSupervisionData('../resources//contentTrain//out', '../resources//dataFiles//lingFeatures//out')
         
-    # with open('../resources//properDistantSupervisionDataV3.pickle', 'rb') as handle:
-    with open('../resources//socialData.pickle', 'rb') as handle:
+    # with open('../resources//pureSocialData.pickle', 'rb') as handle:
+    with open('../resources//properDistantSupervisionDataV3.pickle', 'rb') as handle:
         dataSet = pickle.load(handle)
-
-    dataSize = len(dataSet[0])
 
     normFDict = defaultdict(lambda: 0)
     for fdict in dataSet[1]:
@@ -96,7 +94,6 @@ def main():
     print(f"false precision = {precisionF}")
     print(f"false recall = {recallF}")
     print(f"false F1 = {2*(precisionF*recallF)/(precisionF+recallF)}")
-
 
 def makeDistantSupervisionData(infoAdr, lingfeatsAdr):
     """

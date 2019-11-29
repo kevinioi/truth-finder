@@ -14,7 +14,8 @@ import pickle
 import numpy as np
 from googlesearch import search
 
-CREDIBILITY_MODEL = "../resources//models/distantSupervisionV2M2.model"
+# CREDIBILITY_MODEL = "../resources//models/distantSupervisionV2M2.model"
+CREDIBILITY_MODEL = "../resources//models/distantSupervisionV3M1.model"
 STANCE_MODEL = "../resources/models/stance2v2.model"
 
 class article:
@@ -167,12 +168,22 @@ def preprocessData(articleList):
     """
                     #[{features}, {features}...]
     articleFeatureList = []
+    normDict = defaultdict(lambda : 0)
 
     for article in articleList:
         artFeatureDict = {}
         artFeatureDict[2] = article.stance[1][0]
         artFeatureDict[3] = article.stance[1][1]
+        for key in artFeatureDict:
+            if artFeatureDict[key] > normDict[key]:
+                normDict[key] = artFeatureDict[key]
         articleFeatureList.append(artFeatureDict)
+
+    #Normalize
+    for article in articleFeatureList:
+        for feature in normDict:
+            if feature in article:
+                article[feature] /= normDict[feature]
 
     return articleFeatureList
 
