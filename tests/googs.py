@@ -14,8 +14,8 @@ import pickle
 import numpy as np
 from googlesearch import search
 
-# CREDIBILITY_MODEL = "../resources//models/distantSupervisionV2M2.model"
-CREDIBILITY_MODEL = "../resources//models/distantSupervisionV3M1.model"
+# CREDIBILITY_MODEL = "../resources//models/distantSupervisionV3M1.model"
+CREDIBILITY_MODEL = "../resources//models/distantSupervisionV2M2.model"
 STANCE_MODEL = "../resources/models/stance2v2.model"
 
 class article:
@@ -164,7 +164,11 @@ def pullWebsourceData(claim, urlList):
 @logDeco
 def preprocessData(articleList):
     """
-        takes stored data and converts it into vectors useable by liblinear 
+        takes stored data and converts it into vectors useable by liblinear
+
+        returns: data read to be used in liblinear package's training or prediction
+
+        param: list of articles objects filled with information
     """
                     #[{features}, {features}...]
     articleFeatureList = []
