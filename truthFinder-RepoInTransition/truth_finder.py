@@ -18,13 +18,8 @@ import pickle
 import numpy as np
 from googlesearch import search
 from pathlib import Path
-from tqdm imort tqdm
-
-CREDIBILITY_MODEL = Path("resources/models/distantSupervisionV2M2.model")
-STANCE_MODEL = Path("resources/models/stance2v2.model")
-STANCE_FEATURES = Path("resources/stanceFeatsV2.pickle")
-SOURCE_RELIABILITY = Path("resources/compiledReliabilityDict707.txt")
-LINGUISTIC_FEATURES = Path("resources/correctedLingfeats.pickle")
+from tqdm import tqdm
+import argparse
 
 class article:
     """
@@ -218,21 +213,19 @@ def preprocessData(articleList):
 
 @logDeco
 def predictCredibility(articles, articlesFeatureList, credModel):
-	'''
-		Utilize the trained credibility model to assess the 'trustworthyness' of a claim
-		based on the evidence gathered from the internet
+    '''
+        Utilize the trained credibility model to assess the 'trustworthyness' of a claim
+        based on the evidence gathered from the internet
 
-		params:
-			articles
-
-			articlesFeatureList
-
-
-		return:
-			boolean
-				True if credible, False if incredible 
-	'''
-
+        params:
+            articles (list, struct article):
+                list containing the identifying information for each article
+            articlesFeatureList (list, int):
+                list containing the feature information (X variable) for each article
+        return:
+        boolean
+            True if credible, False if incredible 
+    '''
     # load credibility model
     credModel = llu.load_model(credModel)
 

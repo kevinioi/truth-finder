@@ -32,11 +32,11 @@ query: "Obama was born in Kenya"
 
 I have included model weights that I have trained in the resources folder.
  
-python -m truth_finder \
-    --credModel resources/models/distantSupervisionV2M2.model \
-    --lingFeats resources/correctedLingfeats.pickle \
-    --stanceModel resources/models/stance2v2.model \
-    --stanceFeats resources/stanceFeatsV2.pickle \
+python -m truth_finder ^
+    --credModel resources/models/distantSupervisionV2M2.model ^
+    --lingFeats resources/correctedLingfeats.pickle ^
+    --stanceModel resources/models/stance2v2.model ^
+    --stanceFeats resources/stanceFeatsV2.pickle ^
     --srcRel resources/compiledReliabilityDict707.txt
 
 
