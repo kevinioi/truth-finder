@@ -1,9 +1,15 @@
+'''
+	helper file for the truth-finder program
+
+	contains functions used to manage the texual features of claims/articles 
+'''
+
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 import json
 import nltk
-from nltk.tokenize import word_tokenize
 import pickle
+from nltk.tokenize import word_tokenize
 from collections import defaultdict
 
 def defDictFunc():
@@ -63,20 +69,6 @@ def createFeatureFile(sourceDir, outputAdr):
                 if gram not in features:
                     count +=1
                     features[gram] = count
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     #Save to file
     with open(outputAdr, 'wb') as handle:

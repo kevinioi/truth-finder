@@ -1,1 +1,10 @@
-tests/.google-cookie
+# my folders
+**kevin/
+
+# python / jupyter ignore files
+**__pycache__/
+.ipynb_checkpoints
+
+# googlesearch package cache
+.google-cookie
+

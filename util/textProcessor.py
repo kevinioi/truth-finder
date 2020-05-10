@@ -1,3 +1,10 @@
+'''
+    textProcessor.py
+    
+    Module of the truth-finder program containing the functions
+    for scrapping websources, cleaning the text 
+'''
+
 from bs4 import BeautifulSoup
 import requests
 from nltk import word_tokenize, sent_tokenize, ngrams
@@ -5,12 +12,19 @@ from collections import defaultdict
 from nltk.stem import PorterStemmer
 
 
-def pullArticleText(webAddress, timeoutTime = 4):
+def pullArticleText(webAddress, timeoutTime = 10):
     """
-        Return: list of text representing each section of webpage
+    Extracts text from webadress filtering scripts and html tags 
+    as much as possible  
 
-        param: webAddress: the url to be accessed
-        param: timeoutTime: seconds before giving up on request, default 4
+    params:
+        webAddress (str):
+            the url to be accessed
+        timeoutTime (int):
+            seconds before giving up on request, default 10
+
+    return:
+        list of text representing each section of webpage
     """
     articleText = []
     try:
@@ -42,9 +56,16 @@ def pullArticleText(webAddress, timeoutTime = 4):
 
 def calcOverlap(claim, chunk):
     """
-        Calculates the percent of the chunk that overlaps with the claim
+    Calculates the percent of the chunk that overlaps with the claim
 
-        returns float representing percent overlap
+    params:
+        claim (str):
+            base claim
+        chunk (str):
+            segment of text to be assessed
+
+    returns:
+        float representing percent overlap
     """
     overlap = 0.0
     ps = PorterStemmer()
@@ -81,12 +102,15 @@ def calcOverlap(claim, chunk):
 
 def getSnippets(textSections, maxlen=1):
     """
-    Return list of all possible unique snippets of text ranging from 1 sentence to 'maxlen' sentences
+    params:
+        textSections (list, str): list of sections of text to be processed into snippets
+            Each string in list will be treated as a separate text. Will not combine
+            sentences from different texts
+        maxlen (int):
+            the maximum number of sentences each snippet will contain (default 0)
 
-    param:textSections: list of sections of text to be processed into snippets
-        Each string in list will be treated as a separate text. Will not combine
-        sentences from different texts
-    param: maxlen: the maximum number of sentences each snippet will contain (default 0)
+    returns:
+        list of all possible unique snippets of text ranging from 1 sentence to 'maxlen' sentences
     """
     snippets = set()
 
@@ -116,12 +140,18 @@ def getSnippets(textSections, maxlen=1):
 
 def getRelevence(claim, snippets):
     """
-        returns list of tuples containing the snippets with overlap score of over n
-            and their respective overlap score
-            [(snippet, overlapScore), ...]  -> [(String, float), ...]
+    Calculates the relevence of a snippet to a given claim
 
-        param: claim: string to compare snippets to
-        param: snippets: list of snippets to evaluate
+    params:
+        claim:
+            string to compare snippets to
+        snippets:
+            list of snippets to evaluate
+
+    returns:
+        list of tuples containing the snippets with overlap score of over n
+        and their respective overlap score
+        [(snippet, overlapScore), ...]  -> [(String, float), ...]
     """
     releventSnips = [[],[]]
 
@@ -135,10 +165,13 @@ def getRelevence(claim, snippets):
 
 def prepListForClassification(text, featDict):
     """
-        Returns bigrams and unigram from text. Usable to define problem for linlinear predictor
+    Returns bigrams and unigram from text. Usable to define problem for linlinear predictor
 
-        param: text: string to be processed 
-        param: features: dictionary of possible features for the model
+    param:
+        text (str):
+            string to be processed 
+        featDict (dict):
+            dictionary of possible features for the model
     """
     dataList = []
 
@@ -163,10 +196,13 @@ def prepListForClassification(text, featDict):
 
 def prepArticleForClassification(textBlocks, featDict):
     """
-        returns dictionary containing all feature uni/bigrams in text of article
+    returns dictionary containing all feature uni/bigrams in text of article
 
-        param: textBlocks: list of text blocks in web sourced article\t
-        param: featDict: dictionary listing relevent features and their indices in the model 
+    params:
+        textBlocks:
+            list of text blocks in web sourced article
+        featDict:
+            dictionary listing relevent features and their indices in the model 
     """
     articleFeatures = defaultdict(lambda:0)
 
