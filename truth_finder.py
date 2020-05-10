@@ -283,4 +283,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    for input_file in args.__dict__.values():
+    	if not os.path.exists(Path(input_file)):
+    		raise IOError("file {} does not exists".format(input_file))
+    		
     main(args)
