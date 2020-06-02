@@ -44,7 +44,7 @@ python -m truth_finder \
 ### Training new models
 
 Traing new models is more complicated as you must first aquire the neccessary data for the models.
-Please read the [Data](#Data) section Prior to performing these steps.
+Please read the [Data](#Data) section prior to performing these steps.
 
 Train the  stance determination model:
 
@@ -67,7 +67,7 @@ python -m train_credibility_model --modelName distantSupervision.model
 
 ## Data
 
-The program utilizez a dataset compiled by researchers at the "Max Planck Institute for Informatics". It contains articles from the popular factchecking website 'Snopes.com' with related webseach results. 
+The program utilizes a dataset compiled by researchers at the "Max Planck Institute for Informatics". It contains articles from the popular factchecking website 'Snopes.com' with related webseach results. 
 
 Please download the dataset and exact the contents in the resources/ directory of the TruthFinder program.
 [http://resources.mpi-inf.mpg.de/impact/web_credibility_analysis/Snopes.tar.gz](http://resources.mpi-inf.mpg.de/impact/web_credibility_analysis/Snopes.tar.gz)
